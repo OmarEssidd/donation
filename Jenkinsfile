@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_CREDENTIALS = credentials('f861bec6-fef9-462c-b5ae-0ef24474e8b6')
+        // Remplacer 'github_credentials' par le nom symbolique de vos credentials dans Jenkins
+        GIT_CREDENTIALS = credentials('github_credentials')
     }
 
     stages {
@@ -11,7 +12,7 @@ pipeline {
                 echo "Getting project from Git"
                 checkout([$class: 'GitSCM', 
                           branches: [[name: '*/master']], 
-                          userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git', credentialsId: 'f861bec6-fef9-462c-b5ae-0ef24474e8b6']]])
+                          userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git', credentialsId: 'github_credentials']]])
             }
         }
 
@@ -32,8 +33,8 @@ pipeline {
                 withSonarQubeEnv('MonInstanceSonarQube') {
                     sh """
                     mvn sonar:sonar \
-                        -Dsonar.login="${SONARQUBE_CREDENTIALS_USR}" \
-                        -Dsonar.password="${SONARQUBE_CREDENTIALS_PSW}"
+                        -Dsonar.login="${GIT_CREDENTIALS_USR}" \
+                        -Dsonar.password="${GIT_CREDENTIALS_PSW}"
                     """
                 }
             }
