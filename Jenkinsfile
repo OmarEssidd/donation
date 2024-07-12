@@ -11,9 +11,6 @@ pipeline {
                 echo "Getting project from Git"
                 checkout([$class: 'GitSCM', 
                           branches: [[name: '*/master']], 
-                          doGenerateSubmoduleConfigurations: false, 
-                          extensions: [[$class: 'CleanCheckout']], 
-                          submoduleCfg: [], 
                           userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git', credentialsId: 'f861bec6-fef9-462c-b5ae-0ef24474e8b6']]])
             }
         }
