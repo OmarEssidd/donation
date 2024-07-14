@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_CREDENTIALS = credentials('f861bec6-fef9-462c-b5ae-0ef24474e8b6')
+        SONARQUBE_CREDENTIALS = credentials('squ_f0dd2672a033ceedff48e22766abba6997398d74')
     }
 
     stages {
@@ -14,7 +14,7 @@ pipeline {
                           doGenerateSubmoduleConfigurations: false, 
                           extensions: [[$class: 'CleanCheckout']], 
                           submoduleCfg: [], 
-                          userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git', credentialsId: 'f861bec6-fef9-462c-b5ae-0ef24474e8b6']]])
+                          userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git', credentialsId: 'squ_f0dd2672a033ceedff48e22766abba6997398d74']]])
             }
         }
 
@@ -32,7 +32,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MonInstanceSonarQube') {
+                withSonarQubeEnv('sonarqube') {
                     sh """
                     mvn sonar:sonar \
                         -Dsonar.login="${SONARQUBE_CREDENTIALS_USR}" \
