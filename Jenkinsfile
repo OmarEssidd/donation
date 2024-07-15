@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         SONARQUBE_TOKEN = credentials('squ_7d7d3b46de99dae7e941a99ab0105b37f4d6931d')
-       
     }
 
     stages {
@@ -25,10 +24,13 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    sh """
-                    mvn sonar:sonar \
-                        -Dsonar.login="${SONARQUBE_TOKEN}"
-                    """
+                    script {
+                        // Use the SONARQUBE_TOKEN directly
+                        def scannerHome = tool 'sonarqube_scanner';
+                        withEnv(["PATH+MAVEN=${tool 'Maven'}/bin"]) {
+                            sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=${env.SONARQUBE_TOKEN}"
+                        }
+                    }
                 }
             }
         }
