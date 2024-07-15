@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        SONARQUBE_TOKEN = credentials('squ_7d7d3b46de99dae7e941a99ab0105b37f4d6931d')
-    }
-
     stages {
         stage('Checkout SCM') {
             steps {
@@ -26,7 +22,7 @@ pipeline {
                 script {
                     def scannerHome = tool 'sonarqube_scanner'; // Assuming 'sonarqube_scanner' is configured in Jenkins tools
                     withEnv(["PATH+MAVEN=${tool 'Maven'}/bin"]) {
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=${env.SONARQUBE_TOKEN}"
+                        sh "${scannerHome}/bin/sonar-scanner"
                     }
                 }
             }
