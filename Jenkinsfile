@@ -19,11 +19,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                script {
-                    def scannerHome = tool 'sonarqube_scanner'; // Assuming 'sonarqube_scanner' is configured in Jenkins tools
-                    withEnv(["PATH+MAVEN=${tool 'Maven'}/bin"]) {
-                        sh "${scannerHome}/bin/sonar-scanner"
-                    }
+                withSonarQubeEnv('SonarQube') {
+                    sh '/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarqube_scanner/bin/sonar-scanner'
                 }
             }
         }
