@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_CREDENTIALS = credentials('squ_f0dd2672a033ceedff48e22766abba6997398d74')
+        SONARQUBE_TOKEN = credentials('squ_f0dd2672a033ceedff48e22766abba6997398d74')
+        // Ensure 'squ_f0dd2672a033ceedff48e22766abba6997398d74' is the correct credentials ID for your SonarQube token
     }
 
     stages {
@@ -11,22 +12,13 @@ pipeline {
                 echo "Getting project from Git"
                 checkout([$class: 'GitSCM', 
                           branches: [[name: '*/master']], 
-                          doGenerateSubmoduleConfigurations: false, 
-                          extensions: [[$class: 'CleanCheckout']], 
-                          submoduleCfg: [], 
-                          userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git', credentialsId: 'squ_f0dd2672a033ceedff48e22766abba6997398d74']]])
+                          userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git']]])
             }
         }
 
-        stage('Clean Project') {
+        stage('Clean and Compile Project') {
             steps {
-                sh 'mvn clean'
-            }
-        }
-
-        stage('Compile Project') {
-            steps {
-                sh 'mvn compile'
+                sh 'mvn clean compile'
             }
         }
 
@@ -35,8 +27,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh """
                     mvn sonar:sonar \
-                        -Dsonar.login="${GIT_CREDENTIALS_USR}" \
-                        -Dsonar.password="${GIT_CREDENTIALS_PSW}"
+                        -Dsonar.login="${SONARQUBE_TOKEN}"
                     """
                 }
             }
