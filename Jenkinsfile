@@ -23,13 +23,10 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    script {
-                        // Use the SONARQUBE_TOKEN directly
-                        def scannerHome = tool 'sonarqube_scanner';
-                        withEnv(["PATH+MAVEN=${tool 'Maven'}/bin"]) {
-                            sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=${env.SONARQUBE_TOKEN}"
-                        }
+                script {
+                    def scannerHome = tool 'sonarqube_scanner'; // Assuming 'sonarqube_scanner' is configured in Jenkins tools
+                    withEnv(["PATH+MAVEN=${tool 'Maven'}/bin"]) {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=${env.SONARQUBE_TOKEN}"
                     }
                 }
             }
