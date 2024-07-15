@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        SONARQUBE_TOKEN = credentials('squ_f0dd2672a033ceedff48e22766abba6997398d74')
-        // Ensure 'squ_f0dd2672a033ceedff48e22766abba6997398d74' is the correct credentials ID for your SonarQube token
+        SONARQUBE_TOKEN = credentials('squ_7d7d3b46de99dae7e941a99ab0105b37f4d6931d')
+       
     }
 
     stages {
