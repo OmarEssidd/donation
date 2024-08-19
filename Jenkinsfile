@@ -8,6 +8,9 @@ pipeline {
         NEXUS_CREDENTIALS_ID = 'nexus-credentials'
     }
 
+   pipeline {
+    agent any
+
     stages {
         stage('Checkout SCM') {
             steps {
@@ -20,20 +23,20 @@ pipeline {
 
         stage('Clean and Compile Project') {
             steps {
-                sh 'mvn clean compile'
+                sh 'mvn clean compile -e -X'
             }
         }
 
         stage('Unit Tests') {
             steps {
-                sh 'mvn test'
+                sh 'mvn test -e -X'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv(SONARQUBE_SCANNER) {
-                    sh 'mvn sonar:sonar'
+                withSonarQubeEnv('sonarqube_scanner') {
+                    sh 'mvn sonar:sonar -e -X'
                 }
             }
         }
