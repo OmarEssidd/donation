@@ -19,16 +19,30 @@ pipeline {
         }
 
         stage('Clean and Compile Project') {
-            steps {
-                sh 'mvn clean compile -e -X'
-            }
-        }
+           steps {
+    script {
+      try {
+        sh 'mvn clean compile -e -X'
+      } catch (Exception e) {
+        echo "Maven clean and compile failed: ${e.getMessage()}"
+        throw e
+      }
+    }
+  }
+}
 
-        stage('Unit Tests') {
-            steps {
-                sh 'mvn test -e -X'
-            }
-        }
+       stage('Unit Tests') {
+  steps {
+    script {
+      try {
+        sh 'mvn test -e -X'
+      } catch (Exception e) {
+        echo "Maven tests failed: ${e.getMessage()}"
+        throw e
+      }
+    }
+  }
+}
 
         stage('SonarQube Analysis') {
             steps {
