@@ -1,15 +1,12 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'M2_HOME'
-    }
-
+   
     stages {
         stage('Checkout Git repository') {
             steps {
                 echo 'Pulling from Git repository...'
-                git branch: 'master';
+                git branch: 'master', url: 'https://github.com/OmarEssidd/donation'
                   
             }
         }
