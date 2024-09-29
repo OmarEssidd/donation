@@ -1,106 +1,162 @@
 pipeline {
     agent any
 
-    environment {
-        // Nom de l'installation SonarQube dans Jenkins
-        SONARQUBE_SCANNER = 'sonarqube_scanner'
-        // Credentials pour Nexus (si nécessaire)
-        NEXUS_CREDENTIALS_ID = 'nexus-credentials'
+    tools {
+        maven 'M2_HOME'
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout Git repository') {
             steps {
-                echo "Getting project from Git"
-                checkout([$class: 'GitSCM', 
-                          branches: [[name: '*/master']], 
-                          userRemoteConfigs: [[url: 'https://github.com/OmarEssidd/donation.git']]])
+                echo 'Pulling from Git repository...'
+                git branch: 'master';
+                  
             }
         }
-
-        stage('Clean and Compile Project') {
-           steps {
-    script {
-      try {
-        sh 'mvn clean compile -e -X'
-      } catch (Exception e) {
-        echo "Maven clean and compile failed: ${e.getMessage()}"
-        throw e
-      }
-    }
-  }
-}
-
-       stage('Unit Tests') {
-  steps {
-    script {
-      try {
-        sh 'mvn test -e -X'
-      } catch (Exception e) {
-        echo "Maven tests failed: ${e.getMessage()}"
-        throw e
-      }
-    }
-  }
-}
-
+        stage('Start MySQL') {
+            steps {
+                script {
+                    sh 'sudo systemctl start mysql'
+                }
+            }
+        }
+        stage('Maven Clean Compile') {
+            steps {
+                echo 'Running Maven clean...'
+                sh 'mvn clean'
+                echo 'Running Maven compile...'
+                sh 'mvn compile'
+            }
+        }
+        stage('Tests - JUnit/Mockito') {
+            steps {
+                echo 'Running unit tests...'
+                sh 'mvn test'
+            }
+        }
+        stage('Build package') {
+            steps {
+                echo 'Packaging the application...'
+                sh 'mvn package'
+            }
+        }
+        stage('Maven Install') {
+            steps {
+                echo 'Installing Maven dependencies...'
+                sh 'mvn install'
+            }
+        }
+        stage('JaCoCo Report') {
+            steps {
+                echo 'Running JaCoCo for code coverage...'
+                sh 'mvn test'
+                sh 'mvn jacoco:report'
+            }
+        }
+        stage('JaCoCo coverage report') {
+            steps {
+                step([$class: 'JacocoPublisher',
+                      execPattern: '**/target/jacoco.exec',
+                      classPattern: '**/classes',
+                      sourcePattern: '**/src',
+                      exclusionPattern: '*/target/**,**/*Test*,**/_javassist/**'
+                ])
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv(SONARQUBE_SCANNER) {
-                    sh 'mvn sonar:sonar -e -X'
+                withSonarQubeEnv('sonartokenomar') {
+                    echo 'Running SonarQube analysis...'
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
-
-        stage('Prepare Release') {
-            steps {
-                sh 'mvn clean install'
-            }
-        }
-
         stage('Deploy to Nexus') {
             steps {
-                withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, 
-                                                 usernameVariable: 'NEXUS_USER', 
-                                                 passwordVariable: 'NEXUS_PASS')]) {
-                    sh "mvn deploy -DaltDeploymentRepository=nexus::default::http://localhost:8081/repository/maven-releases/ -Dnexus.user=$NEXUS_USER -Dnexus.password=$NEXUS_PASS"
+                echo 'Deploying to Nexus...'
+                sh 'mvn deploy'
+            }
+        }
+        stage('Build Docker Image (Spring Part)') {
+            steps {
+                script {
+                    echo 'Building Docker image...'
+                    sh 'sudo chmod 666 /var/run/docker.sock'
+                    def dockerImage = docker.build("omaressid/donation:1")
                 }
             }
         }
-
-        stage('Build Docker Image') {
+        stage('Push Docker Image to DockerHub') {
             steps {
-                sh 'docker build -t omaressidd/donation:latest .'
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', 
-                                                 usernameVariable: 'DOCKER_USER', 
-                                                 passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker push omaressidd/donation:latest'
+                script {
+                    withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
+                        echo 'Pushing Docker image to DockerHub...'
+                        sh '''
+                        docker login -u azizbenismail -p "$dockerpwd"
+                        docker push omaressid/donation
+                        '''
+                    }
                 }
             }
         }
-
-        stage('Deploy with Docker Compose') {
+        stage('Docker compose (FrontEnd BackEnd MySql)') {
             steps {
-                sh 'docker-compose up -d'
+                script {
+                    echo 'Stopping MySQL service...'
+                    sh 'sudo systemctl stop mysql'
+                    echo 'Starting Docker Compose...'
+                    sh 'docker-compose up -d'
+                }
             }
         }
-    }
+        stage('Monitoring Services G/P') {
+            steps {
+                script {
+                    echo 'Starting Grafana and Prometheus services...'
+                    sh 'docker start e76185fde1d4'
+                }
+            }
+        }
+        stage('Email Notification') {
+            steps {
+                mail bcc: '', 
+                     body: '''Stage: GIT Pull
+ - Pulling from Git...
 
-    post {
-        always {
-            echo 'Pipeline finished.'
-        }
-        success {
-            echo 'Pipeline completed successfully.'
-        }
-        failure {
-            echo 'Pipeline failed.'
+Stage: Maven Clean Compile
+ - Building Spring project...
+
+Stage: Test - JUNIT/MOCKITO
+ - Testing Spring project...
+
+Stage: JaCoCo Report
+ - Generating JaCoCo Coverage Report...
+
+Stage: SonarQube Analysis
+ - Running Sonarqube analysis...
+
+Stage: Deploy to Nexus
+ - Deploying to Nexus...
+
+Stage: Build Docker Image
+ - Building Docker image for the application...
+
+Stage: Push Docker Image
+ - Pushing Docker image to Docker Hub...
+
+Stage: Docker Compose
+ - Running Docker Compose...
+
+Stage: Monitoring Services G/P
+ - Starting Prometheus and Grafana...
+
+Final Report: The pipeline has completed successfully. No action required.''',
+                     cc: '', 
+                     from: '', 
+                     replyTo: '', 
+                     subject: 'Succès de la pipeline DevOps Project donation', 
+                     to: 'OmarEssid@esprit.tn'
+            }
         }
     }
 }
