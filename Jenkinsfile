@@ -1,57 +1,62 @@
 pipeline {
     agent any
 
-   
     stages {
         stage('Checkout Git repository') {
             steps {
                 echo 'Pulling from Git repository...'
-                git branch: 'master', url: 'https://github.com/OmarEssidd/donation'
-                  
+                git branch: 'master', url: 'https://github.com/OmarEssidd/donation.git'
             }
         }
+        
         stage('Start MySQL') {
             steps {
                 script {
+                    echo 'Starting MySQL service...'
+                    // Ignore security for educational purposes; normally use Docker for MySQL.
                     sh 'sudo systemctl start mysql'
                 }
             }
         }
+
         stage('Maven Clean Compile') {
             steps {
-                echo 'Running Maven clean...'
-                sh 'mvn clean'
-                echo 'Running Maven compile...'
-                sh 'mvn compile'
+                echo 'Running Maven clean and compile...'
+                sh 'mvn clean compile'
             }
         }
+
         stage('Tests - JUnit/Mockito') {
             steps {
                 echo 'Running unit tests...'
                 sh 'mvn test'
             }
         }
+
         stage('Build package') {
             steps {
                 echo 'Packaging the application...'
                 sh 'mvn package'
             }
         }
+
         stage('Maven Install') {
             steps {
                 echo 'Installing Maven dependencies...'
                 sh 'mvn install'
             }
         }
+
         stage('JaCoCo Report') {
             steps {
                 echo 'Running JaCoCo for code coverage...'
-                sh 'mvn test'
-                sh 'mvn jacoco:report'
+                sh 'mvn test jacoco:report'
             }
         }
+
         stage('JaCoCo coverage report') {
             steps {
+                echo 'Publishing JaCoCo coverage report...'
                 step([$class: 'JacocoPublisher',
                       execPattern: '**/target/jacoco.exec',
                       classPattern: '**/classes',
@@ -60,6 +65,7 @@ pipeline {
                 ])
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonartokenomar') {
@@ -68,34 +74,39 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus...'
                 sh 'mvn deploy'
             }
         }
+
         stage('Build Docker Image (Spring Part)') {
             steps {
                 script {
                     echo 'Building Docker image...'
+                    // Ignore security for Docker socket permissions.
                     sh 'sudo chmod 666 /var/run/docker.sock'
-                    def dockerImage = docker.build("omaressid/donation:1")
+                    def dockerImage = docker.build("omaressid/donation")
                 }
             }
         }
+
         stage('Push Docker Image to DockerHub') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
                         echo 'Pushing Docker image to DockerHub...'
                         sh '''
-                        docker login -u azizbenismail -p "$dockerpwd"
+                        docker login -u omaressid89 -p "$dockerpwd"
                         docker push omaressid/donation
                         '''
                     }
                 }
             }
         }
+
         stage('Docker compose (FrontEnd BackEnd MySql)') {
             steps {
                 script {
@@ -106,14 +117,17 @@ pipeline {
                 }
             }
         }
+
         stage('Monitoring Services G/P') {
             steps {
                 script {
                     echo 'Starting Grafana and Prometheus services...'
+                    // Replace container ID with your actual Grafana/Prometheus container ID.
                     sh 'docker start e76185fde1d4'
                 }
             }
         }
+
         stage('Email Notification') {
             steps {
                 mail bcc: '', 
