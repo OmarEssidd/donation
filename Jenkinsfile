@@ -5,24 +5,25 @@ pipeline {
         stage('Checkout Git repository') {
             steps {
                 echo 'Pulling from Git repository...'
-                git branch: 'master', url: 'https://github.com/OmarEssidd/donation.git'
+                git branch: 'master', url: 'https://github.com/OmarEssidd/donation'
             }
         }
-        
-        stage('Start MySQL') {
+
+        stage('Start Services with Docker Compose') {
             steps {
                 script {
-                    echo 'Starting MySQL service...'
-                    // Ignore security for educational purposes; normally use Docker for MySQL.
-                    sh 'sudo systemctl start mysql'
+                    echo 'Starting services with Docker Compose...'
+                    sh 'docker-compose up -d'
                 }
             }
         }
 
         stage('Maven Clean Compile') {
             steps {
-                echo 'Running Maven clean and compile...'
-                sh 'mvn clean compile'
+                echo 'Running Maven clean...'
+                sh 'mvn clean'
+                echo 'Running Maven compile...'
+                sh 'mvn compile'
             }
         }
 
@@ -50,13 +51,13 @@ pipeline {
         stage('JaCoCo Report') {
             steps {
                 echo 'Running JaCoCo for code coverage...'
-                sh 'mvn test jacoco:report'
+                sh 'mvn test'
+                sh 'mvn jacoco:report'
             }
         }
 
         stage('JaCoCo coverage report') {
             steps {
-                echo 'Publishing JaCoCo coverage report...'
                 step([$class: 'JacocoPublisher',
                       execPattern: '**/target/jacoco.exec',
                       classPattern: '**/classes',
@@ -86,9 +87,8 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    // Ignore security for Docker socket permissions.
                     sh 'sudo chmod 666 /var/run/docker.sock'
-                    def dockerImage = docker.build("omaressid/donation")
+                    def dockerImage = docker.build("omaressid/donation:1")
                 }
             }
         }
@@ -100,20 +100,9 @@ pipeline {
                         echo 'Pushing Docker image to DockerHub...'
                         sh '''
                         docker login -u omaressid89 -p "$dockerpwd"
-                        docker push omaressid/donation
+                        docker push omaressid/donation:latest
                         '''
                     }
-                }
-            }
-        }
-
-        stage('Docker compose (FrontEnd BackEnd MySql)') {
-            steps {
-                script {
-                    echo 'Stopping MySQL service...'
-                    sh 'sudo systemctl stop mysql'
-                    echo 'Starting Docker Compose...'
-                    sh 'docker-compose up -d'
                 }
             }
         }
@@ -122,8 +111,8 @@ pipeline {
             steps {
                 script {
                     echo 'Starting Grafana and Prometheus services...'
-                    // Replace container ID with your actual Grafana/Prometheus container ID.
-                    sh 'docker start e76185fde1d4'
+                    sh 'docker start 0be4cb49cf95'
+                    sh 'docker start 9d7d8575dded'
                 }
             }
         }
@@ -154,9 +143,6 @@ Stage: Build Docker Image
 
 Stage: Push Docker Image
  - Pushing Docker image to Docker Hub...
-
-Stage: Docker Compose
- - Running Docker Compose...
 
 Stage: Monitoring Services G/P
  - Starting Prometheus and Grafana...
