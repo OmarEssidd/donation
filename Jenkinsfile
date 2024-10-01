@@ -16,8 +16,11 @@ pipeline {
         stage('Status Mysql') {
             steps {
                 script {
-                    // Securely handling sudo password if needed
-                    sh 'echo $SUDO_PASS | sudo -S systemctl start mysql'
+                    // Using the MySQL credentials
+                    withCredentials([usernamePassword(credentialsId: 'mysql-credentials', usernameVariable: 'MYSQL_USER', passwordVariable: 'MYSQL_PASS')]) {
+                        // Start MySQL service using sudo
+                        sh 'echo $SUDO_PASS | sudo -S systemctl start mysql'
+                    }
                 }
             }
         }
@@ -103,7 +106,7 @@ pipeline {
                         echo 'Pushing Docker image to DockerHub...'
                         sh '''
                         echo "$dockerpwd" | docker login -u omaressid89 --password-stdin
-                        docker push omaressidd/donation:latest
+                        docker push omaressid/donation:latest
                         '''
                     }
                 }
