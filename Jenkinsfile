@@ -102,14 +102,7 @@ pipeline {
             }
         }
 
-        stage('Docker compose (FrontEnd BackEnd MySql)') {
-            steps {
-                script {
-                    sh 'echo $SUDO_PASS | sudo -S systemctl stop mysql'
-                    sh 'docker-compose up -d'
-                }
-            }
-        }
+     
 
         stage('Monitoring Services G/P') {
             steps {
