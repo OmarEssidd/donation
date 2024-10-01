@@ -1,13 +1,7 @@
-FROM maven:3.8-openjdk-17-slim
-WORKDIR /app
-COPY src ./src
-COPY pom.xml ./
-RUN mvn package
 
-FROM --platform=linux/amd64 openjdk:17-jdk-slim
-WORKDIR /app
-COPY --from=builder target/donation-0.0.1-SNAPSHOT.jar app.jar
+FROM openjdk:17
 EXPOSE 8080
-USER nonroot
-ENTRYPOINT ["java", "-jar", "app.jar"]
-HEALTHCHECK CMD curl -f http://localhost:8080/actuator/health || exit 1
+WORKDIR /app
+RUN apt-get update && apt-get install -y curl
+COPY --from=builder target/donation-0.0.1-SNAPSHOT.jar app.jar#ADD target/Kaddem-9.jar Kaddem-9.jar .
+ENTRYPOINT ["java", "-jar", "donation-0.0.1-SNAPSHOT.jar app.jar"]
