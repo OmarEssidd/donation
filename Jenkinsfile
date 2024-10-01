@@ -1,24 +1,26 @@
 pipeline {
     agent any
 
+     tools {
+        maven 'M2_HOME'
+    }
+
     stages {
         stage('Checkout Git repository') {
             steps {
                 echo 'Pulling from Git repository...'
-                git branch: 'master', url: 'https://github.com/OmarEssidd/donation'
+                git branch: 'master', url: 'https://github.com/OmarEssidd/donation.git'
             }
         }
 
-        stage('Start Services with Docker Compose') {
+           stage('Status Mysql') {
             steps {
                 script {
-                    echo 'Starting services with Docker Compose...'
-                    sh 'docker-compose up -d'
+                    sh 'sudo systemctl start mysql'
                 }
             }
         }
-
-        stage('Maven Clean Compile') {
+         stage('Maven Clean Compile') {
             steps {
                 echo 'Running Maven clean...'
                 sh 'mvn clean'
@@ -26,29 +28,27 @@ pipeline {
                 sh 'mvn compile'
             }
         }
-
-        stage('Tests - JUnit/Mockito') {
+          stage('Tests - JUnit/Mockito') {
             steps {
                 echo 'Running unit tests...'
                 sh 'mvn test'
             }
         }
 
-        stage('Build package') {
+            stage('Build package') {
             steps {
                 echo 'Packaging the application...'
                 sh 'mvn package'
             }
         }
-
-        stage('Maven Install') {
+          stage('Maven Install') {
             steps {
                 echo 'Installing Maven dependencies...'
                 sh 'mvn install'
             }
         }
 
-        stage('JaCoCo Report') {
+         stage('JaCoCo Report') {
             steps {
                 echo 'Running JaCoCo for code coverage...'
                 sh 'mvn test'
@@ -56,7 +56,7 @@ pipeline {
             }
         }
 
-        stage('JaCoCo coverage report') {
+           stage('JaCoCo coverage report') {
             steps {
                 step([$class: 'JacocoPublisher',
                       execPattern: '**/target/jacoco.exec',
@@ -67,7 +67,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonartokenomar') {
                     echo 'Running SonarQube analysis...'
@@ -76,36 +76,49 @@ pipeline {
             }
         }
 
-        stage('Deploy to Nexus') {
+          stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus...'
                 sh 'mvn deploy'
             }
         }
 
-        stage('Build Docker Image (Spring Part)') {
+          stage('Build Docker Image (Spring Part)') {
             steps {
                 script {
                     echo 'Building Docker image...'
                     sh 'sudo chmod 666 /var/run/docker.sock'
-                    def dockerImage = docker.build("omaressid/donation:1")
+                    def dockerImage = docker.build("omaressidd/donation:latest")
                 }
             }
         }
 
-        stage('Push Docker Image to DockerHub') {
+ stage('Push Docker Image to DockerHub') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
                         echo 'Pushing Docker image to DockerHub...'
                         sh '''
                         docker login -u omaressid89 -p "$dockerpwd"
-                        docker push omaressid/donation:latest
+                        docker push omaressidd/donation:latest
                         '''
                     }
                 }
             }
         }
+
+
+
+          stage('Docker compose (FrontEnd BackEnd MySql)') {
+            steps {
+                script {
+                    sh 'sudo systemctl stop mysql'
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+
+      
 
         stage('Monitoring Services G/P') {
             steps {
