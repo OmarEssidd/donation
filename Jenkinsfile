@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout Git repository') {
             steps {
                 echo 'Pulling from Git repository...'
-                git branch: 'master', url: 'https://github.com/OmarEssidd/donation.git'
+                git branch: 'master', url: 'https://github.com/OmarEssidd/donation'
             }
         }
 
@@ -87,7 +87,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    sh 'sudo chmod 666 /var/run/docker.sock'
+                    
                     def dockerImage = docker.build("omaressidd/donation:latest")
                 }
             }
