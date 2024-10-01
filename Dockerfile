@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 openjdk:17-jdk-slim AS builder
+FROM maven:3.8-openjdk-17-slim
 WORKDIR /app
 COPY src ./src
 COPY pom.xml ./
