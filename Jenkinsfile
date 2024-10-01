@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout Git repository') {
             steps {
                 echo 'Pulling from Git repository...'
-                git branch: 'master', url: 'https://github.com/OmarEssidd/donation'
+                git branch: 'master', url: 'https://github.com/OmarEssidd/donation.git'
             }
         }
 
