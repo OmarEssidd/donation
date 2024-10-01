@@ -1,14 +1,13 @@
-# Utiliser une image de base Java
-FROM openjdk:17-jdk-slim
-
-# Définir le répertoire de travail
+FROM --platform=linux/amd64 openjdk:17-jdk-slim AS builder
 WORKDIR /app
+COPY src ./src
+COPY pom.xml ./
+RUN mvn package
 
-# Copier le fichier JAR de l'application dans le conteneur
-COPY target/donation-0.0.1-SNAPSHOT.jar donation.jar
-
-# Exposer le port sur lequel l'application s'exécute
+FROM --platform=linux/amd64 openjdk:17-jdk-slim
+WORKDIR /app
+COPY --from=builder target/donation-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
-# Commande pour exécuter l'application
-ENTRYPOINT ["java", "-jar", "donation.jar"]
+USER nonroot
+ENTRYPOINT ["java", "-jar", "app.jar"]
+HEALTHCHECK CMD curl -f http://localhost:8080/actuator/health || exit 1
