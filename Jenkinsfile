@@ -92,7 +92,7 @@ pipeline {
                 script {
                     echo 'Building Docker image...'
                     sh 'sudo chmod 666 /var/run/docker.sock'
-                    def dockerImage = docker.build("omaressid89/donation:1")
+                    def dockerImage = docker.build("omaressid/donation:latest")
                 }
             }
         }
@@ -103,7 +103,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
                         echo 'Pushing Docker image to DockerHub...'
                         sh '''
-                        docker login -u omaressid89 -p "$dockerpwd"
+                        docker login -u omaressid -p "$dockerpwd"
                         docker push omaressid/donation:latest
                         '''
                     }
