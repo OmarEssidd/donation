@@ -13,18 +13,7 @@ pipeline {
             }
         }
 
-        stage('Status Mysql') {
-            steps {
-                script {
-                    // Using the MySQL credentials
-                    withCredentials([usernamePassword(credentialsId: 'mysql-credentials', usernameVariable: 'MYSQL_USER', passwordVariable: 'MYSQL_PASS')]) {
-                        // Start MySQL service using sudo
-                        sh 'echo $SUDO_PASS | sudo -S systemctl start mysql'
-                    }
-                }
-            }
-        }
-
+       
         stage('Maven Clean Compile') {
             steps {
                 echo 'Running Maven clean...'
