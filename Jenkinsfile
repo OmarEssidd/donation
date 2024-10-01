@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-     tools {
+    tools {
         maven 'M2_HOME'
     }
 
@@ -13,14 +13,16 @@ pipeline {
             }
         }
 
-           stage('Status Mysql') {
+        stage('Status Mysql') {
             steps {
                 script {
-                    sh 'sudo systemctl start mysql'
+                    // Securely handling sudo password if needed
+                    sh 'echo $SUDO_PASS | sudo -S systemctl start mysql'
                 }
             }
         }
-         stage('Maven Clean Compile') {
+
+        stage('Maven Clean Compile') {
             steps {
                 echo 'Running Maven clean...'
                 sh 'mvn clean'
@@ -28,27 +30,29 @@ pipeline {
                 sh 'mvn compile'
             }
         }
-          stage('Tests - JUnit/Mockito') {
+
+        stage('Tests - JUnit/Mockito') {
             steps {
                 echo 'Running unit tests...'
                 sh 'mvn test'
             }
         }
 
-            stage('Build package') {
+        stage('Build package') {
             steps {
                 echo 'Packaging the application...'
                 sh 'mvn package'
             }
         }
-          stage('Maven Install') {
+
+        stage('Maven Install') {
             steps {
                 echo 'Installing Maven dependencies...'
                 sh 'mvn install'
             }
         }
 
-         stage('JaCoCo Report') {
+        stage('JaCoCo Report') {
             steps {
                 echo 'Running JaCoCo for code coverage...'
                 sh 'mvn test'
@@ -56,7 +60,7 @@ pipeline {
             }
         }
 
-           stage('JaCoCo coverage report') {
+        stage('JaCoCo coverage report') {
             steps {
                 step([$class: 'JacocoPublisher',
                       execPattern: '**/target/jacoco.exec',
@@ -67,7 +71,7 @@ pipeline {
             }
         }
 
-         stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonartokenomar') {
                     echo 'Running SonarQube analysis...'
@@ -76,30 +80,29 @@ pipeline {
             }
         }
 
-          stage('Deploy to Nexus') {
+        stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus...'
                 sh 'mvn deploy'
             }
         }
 
-          stage('Build Docker Image (Spring Part)') {
+        stage('Build Docker Image (Spring Part)') {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    
                     def dockerImage = docker.build("omaressidd/donation:latest")
                 }
             }
         }
 
- stage('Push Docker Image to DockerHub') {
+        stage('Push Docker Image to DockerHub') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
                         echo 'Pushing Docker image to DockerHub...'
                         sh '''
-                        docker login -u omaressid89 -p "$dockerpwd"
+                        echo "$dockerpwd" | docker login -u omaressid89 --password-stdin
                         docker push omaressidd/donation:latest
                         '''
                     }
@@ -107,18 +110,14 @@ pipeline {
             }
         }
 
-
-
-          stage('Docker compose (FrontEnd BackEnd MySql)') {
+        stage('Docker compose (FrontEnd BackEnd MySql)') {
             steps {
                 script {
-                    sh 'sudo systemctl stop mysql'
+                    sh 'echo $SUDO_PASS | sudo -S systemctl stop mysql'
                     sh 'docker-compose up -d'
                 }
             }
         }
-
-      
 
         stage('Monitoring Services G/P') {
             steps {
