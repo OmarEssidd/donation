@@ -48,7 +48,6 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Dépendances pour JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -61,7 +60,6 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Dépendance pour l'intégration de Mockito avec JUnit 5 -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -92,7 +90,6 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-            <!-- Optionnel : Ajoutez le plugin SonarQube si nécessaire -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
@@ -100,14 +97,17 @@
             </plugin>
         </plugins>
     </build>
+
     <distributionManagement>
-		<repository>
-			<id>deploymentRepo</id>
-			<name>Nexus Repository</name>
-			<url>http://localhost:8081/repository/maven-releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>deploymentRepo</id>
-			<name>snapshots Nexus Repository</name>
-			<url>http://localhost:8081/repository/maven-snapshots/</url>
+        <repository>
+            <id>deploymentRepo</id>
+            <name>Nexus Repository</name>
+            <url>http://localhost:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deploymentRepo</id>
+            <name>snapshots Nexus Repository</name>
+            <url>http://localhost:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
