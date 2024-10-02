@@ -12,46 +12,42 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/OmarEssidd/donation.git'
             }
         }
-
-        stage('Start Services with Docker Compose') {
+           stage('Status Mysql') {
             steps {
                 script {
-                    echo 'Starting services with Docker Compose...'
-                    sh 'docker-compose up -d'
+                    sh 'sudo systemctl start mysql'
                 }
             }
         }
 
-        stage('Maven Clean Compile') {
+         stage('Maven Clean Compile') {
             steps {
-                echo 'Running Maven clean...'
-                sh 'mvn clean'
-                echo 'Running Maven compile...'
+                  sh 'mvn clean'
+                echo 'Running Maven Compile'
                 sh 'mvn compile'
             }
         }
 
-        stage('Tests - JUnit/Mockito') {
+         stage('Tests - JUnit/Mockito') {
             steps {
                 echo 'Running unit tests...'
                 sh 'mvn test'
             }
         }
 
-        stage('Build package') {
+         stage('Build package') {
             steps {
                 echo 'Packaging the application...'
                 sh 'mvn package'
             }
         }
-
         stage('Maven Install') {
             steps {
                 echo 'Installing Maven dependencies...'
                 sh 'mvn install'
             }
         }
-
+        
         stage('JaCoCo Report') {
             steps {
                 echo 'Running JaCoCo for code coverage...'
@@ -71,6 +67,7 @@ pipeline {
             }
         }
 
+            
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonartokenomar') {
@@ -79,7 +76,7 @@ pipeline {
                 }
             }
         }
-
+         
         stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus...'
@@ -96,8 +93,8 @@ pipeline {
                 }
             }
         }
-
-        stage('Push Docker Image to DockerHub') {
+         
+         stage('Push Docker Image to DockerHub') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
@@ -110,13 +107,22 @@ pipeline {
                 }
             }
         }
+        stage('Start Services with Docker Compose') {
+            steps {
+                script {
+                    sh 'sudo systemctl stop mysql'
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+
+    
 
         stage('Monitoring Services G/P') {
             steps {
                 script {
                     echo 'Starting Grafana and Prometheus services...'
                     sh 'docker start 0be4cb49cf95'
-                    sh 'docker start 9d7d8575dded'
                 }
             }
         }
