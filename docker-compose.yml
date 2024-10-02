@@ -1,73 +1,73 @@
 version: '3.8'
 
 services:
-  # app:  # Service pour l'application Spring Boot
-  #   image: omaressid/donation:latest  # Image Docker de l'application
-  #   container_name: donation  # Nom du conteneur
-  #   ports:
-  #     - "8085:8085"  # Redirection du port 8085 de l'hôte vers le conteneur
-  #   environment:  # Variables d'environnement pour l'application
-  #     SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/donation_db  # URL de la base de données MySQL
-  #     SPRING_DATASOURCE_USERNAME: root  # Nom d'utilisateur de la base de données
-  #     SPRING_DATASOURCE_PASSWORD: omar  # Mot de passe de la base de données
-  #   depends_on:  # Dépendance sur le service de base de données
-  #     - db
-  #   networks:  # Réseau auquel le service appartient
-  #     - donation_network
-
-  db:  # Service pour la base de données MySQL
-    image: mysql:latest  # Utilise la dernière version de MySQL
-    container_name: donation_db  # Nom du conteneur
-    environment:  # Variables d'environnement pour la base de données
-      MYSQL_ROOT_PASSWORD: root_password  # Définit un mot de passe root valide
-      MYSQL_DATABASE: donation_db  # Base de données à créer
+  app:
+    image: omaressid/donation:latest
+    container_name: donation
     ports:
-      - "3306:3306"  # Redirection du port 3306 de l'hôte vers le conteneur
-    volumes:
-      - db_data:/var/lib/mysql  # Volume pour persister les données de la base de données
-    networks:  # Réseau auquel le service appartient
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/donation_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: omar
+    depends_on:
+      - db
+    networks:
       - donation_network
 
-  sonarqube:  # Service pour SonarQube
-    image: sonarqube:latest  # Image Docker de SonarQube
-    container_name: sonarqube  # Nom du conteneur
+  db:
+    image: mysql:latest
+    container_name: donation_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: donation_db
     ports:
-      - "9000:9000"  # Redirection du port 9000 de l'hôte vers le conteneur
-    environment:  # Variables d'environnement pour SonarQube
-      - SONARQUBE_JDBC_USERNAME=sonar  # Nom d'utilisateur pour la base de données de SonarQube
-      - SONARQUBE_JDBC_PASSWORD=sonar  # Mot de passe pour la base de données de SonarQube
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonar_db:5432/sonar  # URL de la base de données PostgreSQL
-    depends_on:  # Dépendance sur le service de base de données PostgreSQL
+      - "3306:3306"
+    # volumes:
+    #   - db_data:/var/lib/mysql  # Commenté pour tester sans volume
+    networks:
+      - donation_network
+
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonar_db:5432/sonar
+    depends_on:
       - sonar_db
-    networks:  # Réseau auquel le service appartient
+    networks:
       - donation_network
 
-  sonar_db:  # Service pour la base de données PostgreSQL
-    image: postgres:latest  # Image Docker de PostgreSQL
-    container_name: sonar_db  # Nom du conteneur
-    environment:  # Variables d'environnement pour la base de données PostgreSQL
-      POSTGRES_USER: sonar  # Nom d'utilisateur pour PostgreSQL
-      POSTGRES_PASSWORD: sonar  # Mot de passe pour PostgreSQL
-      POSTGRES_DB: sonar  # Base de données à créer
+  sonar_db:
+    image: postgres:latest
+    container_name: sonar_db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
     ports:
-      - "5432:5432"  # Redirection du port 5432 de l'hôte vers le conteneur
-    volumes:
-      - sonar_db_data:/var/lib/postgresql/data  # Volume pour persister les données de PostgreSQL
-    networks:  # Réseau auquel le service appartient
+      - "5432:5432"
+    # volumes:
+    #   - sonar_db_data:/var/lib/postgresql/data  # Commenté pour tester sans volume
+    networks:
       - donation_network
 
-  nexus:  # Service pour Sonatype Nexus
-    image: sonatype/nexus3  # Image Docker de Nexus
-    container_name: nexus  # Nom du conteneur
+  nexus:
+    image: sonatype/nexus3
+    container_name: nexus
     ports:
-      - "8081:8081"  # Redirection du port 8081 de l'hôte vers le conteneur
-    networks:  # Réseau auquel le service appartient
+      - "8081:8081"
+    networks:
       - donation_network
 
-networks:  # Réseaux définis
-  donation_network:  # Réseau personnalisé
-    driver: bridge  # Type de réseau
+networks:
+  donation_network:
+    driver: bridge
 
-volumes:  # Volumes définis
-  db_data:  # Volume pour la base de données MySQL
-  sonar_db_data:  # Volume pour la base de données PostgreSQL
+volumes:
+  # db_data:  # Commenté pour tester sans volume
+  # sonar_db_data:  # Commenté pour tester sans volume
