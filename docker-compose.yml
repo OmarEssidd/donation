@@ -1,73 +1,36 @@
 version: '3.8'
 
 services:
-  app:
-    image: omaressid/donation:latest
+  donation:
+   
     container_name: donation
     ports:
       - "8085:8085"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/donation_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: omar
-    depends_on:
-      - db
-    networks:
-      - donation_network
+      - SPRING_DATASOURCE_URL= jdbc:mysql://dbmysql:3306/donation_db?createDatabaseIfNotExist=true&userSSL=false
+      - SPRING_DATASOURCE_USERNAME= root
+      - SPRING_DATASOURCE_PASSWORD= root
+    restart: unless-stopped
+    image: omaressid/donation:latest
 
-  db:
+    depends_on:
+
+  dbmysql:
     image: mysql:latest
-    container_name: donation_db
+    container_name: dbmysql
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: donation_db
+      - MYSQL_ROOT_PASSWORD=root
     ports:
       - "3306:3306"
-    # volumes:
-    #   - db_data:/var/lib/mysql  # Commenté pour tester sans volume
-    networks:
-      - donation_network
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/mysql
 
-  sonarqube:
-    image: sonarqube:latest
-    container_name: sonarqube
+  angular-app:
+    image: omaressid/donation:latest  # Spécifiez le nom de votre image et la version (dans cet exemple, "latest")
     ports:
-      - "9000:9000"
-    environment:
-      - SONARQUBE_JDBC_USERNAME=sonar
-      - SONARQUBE_JDBC_PASSWORD=sonar
-      - SONARQUBE_JDBC_URL=jdbc:postgresql://sonar_db:5432/sonar
-    depends_on:
-      - sonar_db
-    networks:
-      - donation_network
-
-  sonar_db:
-    image: postgres:latest
-    container_name: sonar_db
-    environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-      POSTGRES_DB: sonar
-    ports:
-      - "5432:5432"
-    # volumes:
-    #   - sonar_db_data:/var/lib/postgresql/data  # Commenté pour tester sans volume
-    networks:
-      - donation_network
-
-  nexus:
-    image: sonatype/nexus3
-    container_name: nexus
-    ports:
-      - "8081:8081"
-    networks:
-      - donation_network
-
-networks:
-  donation_network:
-    driver: bridge
+      - "4200:80"  # Assurez-vous que les ports correspondent à ceux que vous utilisez dans votre application
+    restart: always  # Optionnel : redémarrer toujours le conteneur en cas d'échec
 
 volumes:
-  # db_data:  # Commenté pour tester sans volume
-  # sonar_db_data:  # Commenté pour tester sans volume
+  db:
