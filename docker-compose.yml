@@ -2,24 +2,23 @@ version: '3.8'
 
 services:
   donation:
-   
     container_name: donation
     ports:
       - "8085:8085"
     environment:
-      - SPRING_DATASOURCE_URL= jdbc:mysql://dbmysql:3306/donation_db?createDatabaseIfNotExist=true&userSSL=false
-      - SPRING_DATASOURCE_USERNAME= root
-      - SPRING_DATASOURCE_PASSWORD= root
+      - SPRING_DATASOURCE_URL=jdbc:mysql://dbmysql:3306/donation_db?createDatabaseIfNotExist=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD= # Empty password
     restart: unless-stopped
     image: omaressid/donation:latest
-
     depends_on:
+      - dbmysql
 
   dbmysql:
     image: mysql:latest
     container_name: dbmysql
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD= # Empty password
     ports:
       - "3306:3306"
     restart: unless-stopped
@@ -27,10 +26,10 @@ services:
       - db:/var/lib/mysql
 
   angular-app:
-    image: omaressid/donation:latest  # Spécifiez le nom de votre image et la version (dans cet exemple, "latest")
+    image: omaressid/donation:latest
     ports:
-      - "4200:80"  # Assurez-vous que les ports correspondent à ceux que vous utilisez dans votre application
-    restart: always  # Optionnel : redémarrer toujours le conteneur en cas d'échec
+      - "4200:80"
+    restart: always
 
 volumes:
   db:
