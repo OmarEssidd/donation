@@ -19,7 +19,7 @@ services:
     image: mysql:5.6  # Use the latest version of MySQL
     container_name: donation_db
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD:
       MYSQL_DATABASE: donation_db
     ports:
       - "3306:3306"
