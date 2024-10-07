@@ -32,7 +32,7 @@ public class Employe implements Serializable {
     @JsonIgnore
     private Set<Don> dons;
 
-    // Added getter in case Lombok isn't recognized
+    // Manually added getter in case Lombok isn't recognized
     public String getNomEmploye() {
         return nomEmploye;
     }

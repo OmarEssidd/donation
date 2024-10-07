@@ -29,7 +29,7 @@ public class DonationRestController {
 
     @PostMapping("/addEmployeAndAssignToEntreprise/{nomEntreprise}")
     public Employe addEmployeAndAssignToEntreprise(@RequestBody Employe employe, @PathVariable String nomEntreprise){
-        return iServices.addEmployeAndAssignToEntreprise(employe,nomEntreprise);
+        return iServices.addEmployeAndAssignToEntreprise(employe, nomEntreprise);
     }
 
     @PostMapping("/addDon")
@@ -41,19 +41,20 @@ public class DonationRestController {
     public Set<Don> getDonByType(@PathVariable TypeDons type){
         return iServices.getDonByType(type);
     }
-@GetMapping("/getEmployeByRegion/{region}/{nomentreprise}")
-public List<Employe> getEmployeByRegion(@PathVariable String region, @PathVariable String nomentreprise) {
-        return iServices.getEmployeByRegion(region,nomentreprise);
-}
 
-@GetMapping("/getTotalDonation/{date1}/{date2}")
-    public Float getTotalDonation(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date1,@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date2) {
+    @GetMapping("/getEmployeByRegion/{region}/{nomentreprise}")
+    public List<Employe> getEmployeByRegion(@PathVariable String region, @PathVariable String nomentreprise) {
+        return iServices.getEmployeByRegion(region, nomentreprise);
+    }
+
+    @GetMapping("/getTotalDonation/{date1}/{date2}")
+    public Float getTotalDonation(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date1, 
+                                  @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date2) {
         return iServices.getTotalDonation(date1, date2);
     }
-@GetMapping("getEmployeByDon")
-    public void getEmployeByDon(){
-        Employe e = new Employe();
-        log.info("Le meilleur employé du mois est : " + e.getNomEmploye());
-    }
 
+    @GetMapping("/getEmployeByDon")
+    public void getEmployeByDon() {
+        iServices.getEmployeByDon();  // Calls the method from ServiceIMP
+    }
 }
