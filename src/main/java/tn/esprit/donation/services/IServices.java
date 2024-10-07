@@ -7,7 +7,6 @@ import tn.esprit.donation.entities.TypeDons;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public interface IServices {
 
@@ -17,11 +16,11 @@ public interface IServices {
 
     Don addDon(Don don);
 
-    Set<Don> getDonByType(TypeDons type);
+    List<Don> getDonByType(TypeDons type); // Cette méthode retourne maintenant une List<Don>
 
     void getEmployeByDon();
 
-    List<Employe> getEmployeByRegion(String region, String nomentreprise);
+    List<Employe> getEmployeByRegion(String region, String nomEntreprise); // Corrigez le nom de la variable à "nomEntreprise"
 
     Float getTotalDonation(Date date1, Date date2);
 }
