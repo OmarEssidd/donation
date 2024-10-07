@@ -3,7 +3,6 @@ package tn.esprit.donation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,8 +13,7 @@ import tn.esprit.donation.entities.TypeDons;
 import tn.esprit.donation.repositories.EntrepriseRepository;
 import tn.esprit.donation.repositories.DonRepository;
 import tn.esprit.donation.repositories.EmployeRepository;
-import tn.esprit.donation.services.IServices;
-import tn.esprit.donation.services.ServiceImpl;
+import tn.esprit.donation.services.ServiceIMP;
 
 import java.util.*;
 
@@ -35,7 +33,7 @@ class IServicesUnitTest {
     private DonRepository donRepository;
 
     @InjectMocks
-    private ServicesImpl services;
+    private ServiceIMP services; // Utilisez ServiceIMP ici
 
     @BeforeEach
     void setUp() {
@@ -62,7 +60,7 @@ class IServicesUnitTest {
         Employe employe = new Employe();
         employe.setNomEmploye("John Doe");
 
-        when(entrepriseRepository.findByNomEntreprise("TechCorp")).thenReturn(Optional.of(entreprise));
+        when(entrepriseRepository.findByNomEntreprise("TechCorp")).thenReturn(entreprise);
         when(employeRepository.save(employe)).thenReturn(employe);
 
         Employe result = services.addEmployeAndAssignToEntreprise(employe, "TechCorp");
@@ -105,10 +103,10 @@ class IServicesUnitTest {
 
         List<Employe> employes = Collections.singletonList(employe);
 
-        when(employeRepository.getEmployeByRegionAndEntreprise("North", "TechCorp")).thenReturn(employes);
+        when(employeRepository.getEmployeByRegion("North", "TechCorp")).thenReturn(employes);
         List<Employe> result = services.getEmployeByRegion("North", "TechCorp");
 
-        verify(employeRepository, times(1)).getEmployeByRegionAndEntreprise("North", "TechCorp");
+        verify(employeRepository, times(1)).getEmployeByRegion("North", "TechCorp");
         assertEquals(1, result.size());
         assertEquals("Alice", result.get(0).getNomEmploye());
     }
@@ -118,10 +116,10 @@ class IServicesUnitTest {
         Date date1 = new Date();
         Date date2 = new Date();
 
-        when(donRepository.getTotalByDon(date1, date2)).thenReturn(1000.0f);
+        when(donRepository.calculateTotalDonationsBetweenDates(date1, date2)).thenReturn(1000.0f);
         Float result = services.getTotalDonation(date1, date2);
 
-        verify(donRepository, times(1)).getTotalByDon(date1, date2);
+        verify(donRepository, times(1)).calculateTotalDonationsBetweenDates(date1, date2);
         assertEquals(1000.0f, result);
     }
 }
