@@ -1,0 +1,124 @@
+package tn.esprit.donation.restController;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import tn.esprit.donation.entities.Don;
+import tn.esprit.donation.entities.Employe;
+import tn.esprit.donation.entities.Entreprise;
+import tn.esprit.donation.entities.TypeDons;
+import tn.esprit.donation.services.IServices;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class DonationRestControllerTest {
+
+    @Mock
+    private IServices iServices;
+
+    @InjectMocks
+    private DonationRestController donationRestController;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    void testAddEntreprise() {
+        Entreprise entreprise = new Entreprise();
+        when(iServices.addEntreprise(any(Entreprise.class))).thenReturn(entreprise);
+
+        Entreprise result = donationRestController.addEntreprise(entreprise);
+
+        verify(iServices, times(1)).addEntreprise(any(Entreprise.class));
+        assertNotNull(result);
+    }
+
+    @Test
+    void testAddEmployeAndAssignToEntreprise() {
+        Employe employe = new Employe();
+        String nomEntreprise = "TechCorp";
+        when(iServices.addEmployeAndAssignToEntreprise(any(Employe.class), anyString())).thenReturn(employe);
+
+        Employe result = donationRestController.addEmployeAndAssignToEntreprise(employe, nomEntreprise);
+
+        verify(iServices, times(1)).addEmployeAndAssignToEntreprise(any(Employe.class), eq(nomEntreprise));
+        assertNotNull(result);
+    }
+
+    @Test
+    void testAddDon() {
+        Don don = new Don();
+        when(iServices.addDon(any(Don.class))).thenReturn(don);
+
+        Don result = donationRestController.addDon(don);
+
+        verify(iServices, times(1)).addDon(any(Don.class));
+        assertNotNull(result);
+    }
+
+    @Test
+    void testGetDonByType() {
+        TypeDons type = TypeDons.FINANCIER;
+        Set<Don> dons = Collections.singleton(new Don());
+        when(iServices.getDonByType(type)).thenReturn(dons);
+
+        Set<Don> result = donationRestController.getDonByType(type);
+
+        verify(iServices, times(1)).getDonByType(type);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetEmployeByRegion() {
+        String region = "North";
+        String nomEntreprise = "TechCorp";
+        List<Employe> employes = List.of(new Employe());
+        when(iServices.getEmployeByRegion(region, nomEntreprise)).thenReturn(employes);
+
+        List<Employe> result = donationRestController.getEmployeByRegion(region, nomEntreprise);
+
+        verify(iServices, times(1)).getEmployeByRegion(region, nomEntreprise);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetTotalDonation() {
+        Date date1 = new Date();
+        Date date2 = new Date();
+        Float totalDonation = 1000.0f;
+        when(iServices.getTotalDonation(date1, date2)).thenReturn(totalDonation);
+
+        Float result = donationRestController.getTotalDonation(date1, date2);
+
+        verify(iServices, times(1)).getTotalDonation(date1, date2);
+        assertEquals(totalDonation, result);
+    }
+
+    @Test
+    void testGetEmployeByDon() {
+        donationRestController.getEmployeByDon();
+
+        // Here, since getEmployeByDon is only logging, we simply check for invocation.
+        verify(iServices, times(0)).getEmployeByDon(); // No service call expected
+    }
+}
