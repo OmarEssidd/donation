@@ -83,9 +83,5 @@ public class ServiceIMP implements IServices {
         return donRepository.calculateTotalDonationsBetweenDates(date1, date2); // Updated method name
     }
 
-    // Change Set<Don> to List<Don> in the method signature
-    @Override
-    public List<Don> getDonationsByEmploye(Employe employe) {
-        return donRepository.findByEmploye(employe); // Return the List directly
-    }
+
 }
