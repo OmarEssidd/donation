@@ -45,7 +45,7 @@ public class DonationRestController {
     }
 
     @GetMapping("/getDonByType/{type}")
-    public ResponseEntity<Set<Don>> getDonByType(@PathVariable TypeDons type){
+    public ResponseEntity<List<Don>> getDonByType(@PathVariable TypeDons type){
         List<Don> donations = iServices.getDonByType(type);
         return new ResponseEntity<>(donations, HttpStatus.OK); // Retourne un code 200
     }
