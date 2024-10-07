@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface DonRepository extends JpaRepository<Don, Long> {
     
-    Set<Don> findByType(TypeDons type);
+    List<Don> findByType(TypeDons type);
     
     /**
      * Finds all donations made in the current month.
@@ -19,7 +19,7 @@ public interface DonRepository extends JpaRepository<Don, Long> {
      * @return a set of donations made in the current month
      */
     @Query("SELECT d FROM Don d WHERE MONTH(d.date) = MONTH(CURRENT_DATE) AND YEAR(d.date) = YEAR(CURRENT_DATE)")
-    Set<Don> findDonByMonth();
+    List<Don> findDonByMonth();
 
     /**
      * Calculates the total donation amount between two dates.

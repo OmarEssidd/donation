@@ -9,8 +9,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.TypeDons;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -46,20 +48,14 @@ class DonRepositoryTest {
 
     @Test
     void testFindByType() {
-        // Test pour récupérer les dons par type
-        List<Don> dons = donRepository.findByType(TypeDons.FOOD); // Assurez-vous que cela retourne List<Don>
-
-        // Vérifie que les résultats contiennent les dons de type FOOD
+        List<Don> dons = donRepository.findByType(TypeDons.FOOD); // Retourne directement List<Don>
         assertNotNull(dons);
         assertEquals(2, dons.size());
     }
 
     @Test
     void testFindDonByMonth() {
-        // Test pour récupérer les dons du mois courant
-        List<Don> donsDuMois = donRepository.findDonByMonth();
-
-        // Vérifie que les dons retournés sont ceux du mois courant
+        List<Don> donsDuMois = donRepository.findDonByMonth(); // Retourne directement List<Don>
         assertNotNull(donsDuMois);
         assertEquals(3, donsDuMois.size());
     }
