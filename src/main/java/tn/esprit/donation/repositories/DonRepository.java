@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.TypeDons;
+import tn.esprit.donation.entities.Employe;
+
 
 import java.util.Date;
 import java.util.List;  // Ensure this import is present
