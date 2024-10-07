@@ -11,7 +11,7 @@ import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.Employe;
 import tn.esprit.donation.entities.Entreprise;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -59,11 +59,11 @@ class CroissantRougeRepositoryTest {
     @Test
     void testGetEmployeByRegion() {
         // Exécute la méthode de test
-        List<Employe> employes = croissantRougeRepository.getEmployeByRegion("North", "TechCorp");
+        Set<Employe> employes = croissantRougeRepository.getEmployeByRegion("North", "TechCorp");
 
         // Vérifie les résultats
         assertNotNull(employes);
         assertEquals(1, employes.size());
-        assertEquals("John", employes.get(0).getNomEmploye());
+        assertEquals("John", employes.iterator().next().getNomEmploye());
     }
 }
