@@ -11,7 +11,7 @@ import java.util.List;  // Ensure this import is present
 import java.util.Set;
 
 public interface DonRepository extends JpaRepository<Don, Long> {
-    
+    List<Don> findByEmploye(Employe employe);
     List<Don> findByType(TypeDons type);
     
     @Query("SELECT d FROM Don d WHERE MONTH(d.date) = MONTH(CURRENT_DATE) AND YEAR(d.date) = YEAR(CURRENT_DATE)")
