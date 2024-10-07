@@ -5,13 +5,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tn.esprit.donation.entities.Employe;
 
-import java.util.Date;
 import java.util.List;
 
-public interface EmployeRepository extends JpaRepository<Employe,Long> {
+public interface EmployeRepository extends JpaRepository<Employe, Long> {
 
-    @Query("select e from Employe e join Don d on d.employe =e join CroissantRouge  cr on d member cr.dons where cr.region = :region and e.entreprise.nomEntreprise = :nomentreprise")
-            public List<Employe> getEmployeByRegionAndEntreprise(@Param("region") String region, @Param("nomentreprise") String nomentreprise) ;
-
-
+    /**
+     * Retrieves employees based on region and company name.
+     *
+     * @param region the region to filter employees
+     * @param nomEntreprise the company name to filter employees
+     * @return a list of employees matching the specified criteria
+     */
+    @Query("SELECT e FROM Employe e JOIN e.dons d JOIN d.croissantRouge cr WHERE cr.region = :region AND e.entreprise.nomEntreprise = :nomEntreprise")
+    List<Employe> getEmployeByRegionAndEntreprise(@Param("region") String region, @Param("nomEntreprise") String nomEntreprise);
 }
