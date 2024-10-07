@@ -20,6 +20,7 @@ public class CroissantRouge implements Serializable {
     private Long idCroissantRouge;
 
     private String region;
-    @OneToMany
+
+    @OneToMany(mappedBy = "croissantRouge", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Don> dons;
 }

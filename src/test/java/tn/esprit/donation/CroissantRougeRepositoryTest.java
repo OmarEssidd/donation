@@ -11,6 +11,7 @@ import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.Employe;
 import tn.esprit.donation.entities.Entreprise;
 
+import java.util.List; // Import List class
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,11 +49,16 @@ class CroissantRougeRepositoryTest {
         // Création d'un don associé à l'employé
         Don don = new Don();
         don.setEmploye(employe);
+        
+        // Assurez-vous que le montant et d'autres propriétés nécessaires sont définies
+        // don.setMontant(100.0f); // Uncomment if needed
+        // don.setDate(new Date()); // Uncomment if needed
+        // don.setType(TypeDons.FOOD); // Uncomment if needed
 
         // Création d'un CroissantRouge associé au don
         CroissantRouge croissantRouge = new CroissantRouge();
         croissantRouge.setRegion("North");
-        croissantRouge.setDons(List.of(don));
+        croissantRouge.setDons(List.of(don)); // Ensure that you have imported List
         croissantRougeRepository.save(croissantRouge);
     }
 

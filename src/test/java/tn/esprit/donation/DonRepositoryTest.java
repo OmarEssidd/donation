@@ -10,9 +10,7 @@ import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.TypeDons;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,7 +47,7 @@ class DonRepositoryTest {
     @Test
     void testFindByType() {
         // Test pour récupérer les dons par type
-        Set<Don> dons = donRepository.findByType(TypeDons.FOOD);
+        List<Don> dons = donRepository.findByType(TypeDons.FOOD); // Ensure this returns List<Don>
 
         // Vérifie que les résultats contiennent les dons de type FOOD
         assertNotNull(dons);

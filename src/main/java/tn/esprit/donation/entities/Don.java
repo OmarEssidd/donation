@@ -27,15 +27,12 @@ public class Don implements Serializable {
     private TypeDons type;
 
     @ManyToOne
-    @JsonIgnore  // Empêche les problèmes de sérialisation JSON si nécessaire
+    @JoinColumn(name = "employe_id")
+    @JsonIgnore
     private Employe employe;
 
-    // Méthodes manuelles pour l'employé au cas où Lombok ne fonctionne pas
-    public Employe getEmploye() {
-        return employe;
-    }
-
-    public void setEmploye(Employe employe) {
-        this.employe = employe;
-    }
+    @ManyToOne
+    @JoinColumn(name = "croissant_rouge_id")
+    @JsonIgnore
+    private CroissantRouge croissantRouge;
 }
