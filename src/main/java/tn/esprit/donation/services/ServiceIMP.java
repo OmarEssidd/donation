@@ -59,7 +59,7 @@ public class ServiceIMP implements IServices {
     @Override
     @Scheduled(cron = "*/15 * * * * *")
     public void getEmployeByDon() {
-        Set<Don> currentMonthDonations = donRepository.findDonByMonth(); // Mise à jour ici
+        Set<Don> currentMonthDonations = donRepository.findDonByMonth();
 
         Map<Employe, Long> donationCountsByEmployee = currentMonthDonations.stream()
                 .collect(Collectors.groupingBy(Don::getEmploye, Collectors.counting()));
@@ -75,12 +75,12 @@ public class ServiceIMP implements IServices {
     }
 
     @Override
-    public List<Employe> getEmployeByRegion(String region, String nomentreprise) {
-        return croissantRougeRepository.getEmployeByRegion(region, nomentreprise);
+    public List<Employe> getEmployeByRegion(String region, String nomEntreprise) {
+        return croissantRougeRepository.getEmployeByRegion(region, nomEntreprise);
     }
 
     @Override
     public Float getTotalDonation(Date date1, Date date2) {
-        return donRepository.getTotalByDon(date1, date2); // Mise à jour ici
+        return donRepository.calculateTotalDonationsBetweenDates(date1, date2); // Updated method name
     }
 }
