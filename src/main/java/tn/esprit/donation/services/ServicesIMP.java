@@ -1,7 +1,8 @@
 package tn.esprit.donation.services;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.donation.entities.Don;
@@ -21,13 +22,14 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Slf4j
-public class ServicesImpl implements IServices { // Changed the class name to ServicesImpl
+public class ServiceIMP implements IServices {
 
-    private EntrepriseRepository entrepriseRepository;
-    private EmployeRepository employeRepository;
-    private DonRepository donRepository;
-    private CroissantRougeRepository croissantRougeRepository;
+    private static final Logger log = LoggerFactory.getLogger(ServiceIMP.class);
+
+    private final EntrepriseRepository entrepriseRepository;
+    private final EmployeRepository employeRepository;
+    private final DonRepository donRepository;
+    private final CroissantRougeRepository croissantRougeRepository;
 
     @Override
     public Entreprise addEntreprise(Entreprise entreprise) {

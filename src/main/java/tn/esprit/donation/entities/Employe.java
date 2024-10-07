@@ -23,6 +23,7 @@ public class Employe implements Serializable {
     private String prenomEmploye;
 
     private String poste;
+
     @ManyToOne
     @JsonIgnore
     private Entreprise entreprise;
@@ -30,4 +31,9 @@ public class Employe implements Serializable {
     @OneToMany(mappedBy = "employe")
     @JsonIgnore
     private Set<Don> dons;
+
+    // Added getter in case Lombok isn't recognized
+    public String getNomEmploye() {
+        return nomEmploye;
+    }
 }
