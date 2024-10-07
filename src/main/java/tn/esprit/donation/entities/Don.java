@@ -7,33 +7,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Set;
-
+import java.util.Date;
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Employe implements Serializable {
+public class Don implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idEmploye;
-
-    private String nomEmploye;
-
-    private String prenomEmploye;
-
-    private String poste;
-
+    private Long idDon;
+    private double montant;
+    @Temporal(TemporalType.DATE)
+    private Date date;
+    @Enumerated(EnumType.STRING)
+    private TypeDons type;
     @ManyToOne
-    @JsonIgnore
-    private Entreprise entreprise;
-
-    @OneToMany(mappedBy = "employe")
-    @JsonIgnore
-    private Set<Don> dons;
-
-    // Manually added getter in case Lombok isn't recognized
-    public String getNomEmploye() {
-        return nomEmploye;
-    }
+    private Employe employe;
 }
