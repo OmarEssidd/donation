@@ -16,6 +16,7 @@ import tn.esprit.donation.repositories.EmployeRepository;
 import tn.esprit.donation.services.ServiceIMP;
 
 import java.util.*;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -90,7 +91,7 @@ class ServiceIMPUnitTest {
         dons.add(don1);
 
         when(donRepository.findByType(TypeDons.CASH)).thenReturn(dons);
-        Set<Don> result = services.getDonByType(TypeDons.CASH);
+        List<Don> result = services.getDonByType(TypeDons.CASH);
 
         verify(donRepository, times(1)).findByType(TypeDons.CASH);
         assertEquals(1, result.size());
