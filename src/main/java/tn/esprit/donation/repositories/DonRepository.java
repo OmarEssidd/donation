@@ -7,10 +7,8 @@ import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.TypeDons;
 import tn.esprit.donation.entities.Employe;
 
-
 import java.util.Date;
-import java.util.List;  // Ensure this import is present
-import java.util.Set;
+import java.util.List;
 
 public interface DonRepository extends JpaRepository<Don, Long> {
     List<Don> findByEmploye(Employe employe);

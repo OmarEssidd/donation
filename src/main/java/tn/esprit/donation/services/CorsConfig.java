@@ -13,23 +13,16 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
         
-        // Specify allowed origin (you can modify this for production)
         corsConfig.addAllowedOrigin("http://localhost:4200");
-        
-        // Specify allowed HTTP methods
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedMethod("PUT");
         corsConfig.addAllowedMethod("DELETE");
-        
-        // Allow all headers
         corsConfig.addAllowedHeader("*");
-        
-        // Set maximum age for preflight requests
-        corsConfig.setMaxAge(3600L); // 1 hour
+        corsConfig.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig); // Apply to all paths
+        source.registerCorsConfiguration("/**", corsConfig);
         
         return new CorsFilter(source);
     }

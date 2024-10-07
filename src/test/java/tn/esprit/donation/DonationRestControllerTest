@@ -7,8 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.Employe;
@@ -19,7 +17,6 @@ import tn.esprit.donation.services.IServices;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,7 +34,7 @@ class DonationRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -77,10 +74,10 @@ class DonationRestControllerTest {
     @Test
     void testGetDonByType() {
         TypeDons type = TypeDons.FINANCIER;
-        Set<Don> dons = Collections.singleton(new Don());
+        List<Don> dons = Collections.singletonList(new Don()); // Change Set<Don> to List<Don>
         when(iServices.getDonByType(type)).thenReturn(dons);
 
-        Set<Don> result = donationRestController.getDonByType(type);
+        List<Don> result = donationRestController.getDonByType(type); // Change Set<Don> to List<Don>
 
         verify(iServices, times(1)).getDonByType(type);
         assertNotNull(result);
