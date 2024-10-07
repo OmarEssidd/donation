@@ -1,8 +1,7 @@
 package tn.esprit.donation.services;
 
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.donation.entities.Don;
@@ -17,18 +16,18 @@ import tn.esprit.donation.repositories.EntrepriseRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class ServiceIMP implements IServices {
+@Slf4j
+public class ServiceIMP  implements IServices {
 
-    private static final Logger log = LoggerFactory.getLogger(ServiceIMP.class);
-
-    private final EntrepriseRepository entrepriseRepository;
-    private final EmployeRepository employeRepository;
-    private final DonRepository donRepository;
-    private final CroissantRougeRepository croissantRougeRepository;
+    private EntrepriseRepository entrepriseRepository;
+    private EmployeRepository employeRepository;
+    private DonRepository donRepository;
+    private CroissantRougeRepository croissantRougeRepository;
 
     @Override
     public Entreprise addEntreprise(Entreprise entreprise) {
@@ -38,50 +37,51 @@ public class ServiceIMP implements IServices {
     @Override
     public Employe addEmployeAndAssignToEntreprise(Employe employe, String nomEntreprise) {
         Entreprise entreprise = entrepriseRepository.findByNomEntreprise(nomEntreprise);
-        if (entreprise == null) {
-            throw new IllegalArgumentException("Entreprise non trouvée pour le nom : " + nomEntreprise);
-        }
         employe.setEntreprise(entreprise);
         return employeRepository.save(employe);
     }
 
     @Override
     public Don addDon(Don don) {
+
         return donRepository.save(don);
+
     }
 
     @Override
-    public List<Don> getDonByType(TypeDons type) { // Change Set<Don> to List<Don>
-        return donRepository.findByType(type); // Ensure the repository method returns a List<Don>
+    public Set<Don> getDonByType(TypeDons type) {
+        return donRepository.findByType(type);
     }
 
     @Override
-    @Scheduled(cron = "*/15 * * * * *")
+  @Scheduled(cron = "*/15 * * * * *")
+  //  @Scheduled(cron = "0 0 0 1 * *")
     public void getEmployeByDon() {
-        List<Don> currentMonthDonations = donRepository.findDonByMonth();
+
+       List<Don> currentMonthDonations = donRepository.findDonByMonth();
+
 
         Map<Employe, Long> donationCountsByEmployee = currentMonthDonations.stream()
                 .collect(Collectors.groupingBy(Don::getEmploye, Collectors.counting()));
+
 
         Employe bestEmployee = donationCountsByEmployee.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .orElse(null);
 
-        if (bestEmployee != null) {
-            log.info("Le meilleur employé du mois est : " + bestEmployee.getNomEmploye());
-        }
+       if (bestEmployee != null) {
+            log.info("Le meilleur employé du mois est : " + bestEmployee.getNomEmploye() );
+       }
     }
 
     @Override
-    public List<Employe> getEmployeByRegion(String region, String nomEntreprise) {
-        return croissantRougeRepository.getEmployeByRegion(region, nomEntreprise);
+    public List<Employe> getEmployeByRegion(String region, String nomentreprise) {
+        return croissantRougeRepository.getEmployeByRegion(region, nomentreprise);
     }
 
     @Override
     public Float getTotalDonation(Date date1, Date date2) {
-        return donRepository.calculateTotalDonationsBetweenDates(date1, date2); // Updated method name
+        return donRepository.getTotalByDon(date1, date2);
     }
-
-
 }

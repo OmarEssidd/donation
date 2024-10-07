@@ -1,5 +1,6 @@
 package tn.esprit.donation.services;
 
+import org.springframework.data.repository.query.Param;
 import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.Employe;
 import tn.esprit.donation.entities.Entreprise;
@@ -7,20 +8,20 @@ import tn.esprit.donation.entities.TypeDons;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface IServices {
 
-    Entreprise addEntreprise(Entreprise entreprise);
+    public Entreprise addEntreprise(Entreprise entreprise);
+    public Employe addEmployeAndAssignToEntreprise(Employe employe, String nomEntreprise);
 
-    Employe addEmployeAndAssignToEntreprise(Employe employe, String nomEntreprise);
+    public Don addDon(Don don);
+    public Set<Don> getDonByType(TypeDons type) ;
 
-    Don addDon(Don don);
+    public void getEmployeByDon() ;
 
-    List<Don> getDonByType(TypeDons type); // Cette méthode retourne maintenant une List<Don>
+    public List<Employe> getEmployeByRegion(String region, String nomentreprise) ;
 
-    void getEmployeByDon();
+    public Float getTotalDonation(Date date1, Date date2) ;
 
-    List<Employe> getEmployeByRegion(String region, String nomEntreprise); // Corrigez le nom de la variable à "nomEntreprise"
-
-    Float getTotalDonation(Date date1, Date date2);
 }

@@ -1,14 +1,17 @@
 package tn.esprit.donation.repositories;
 
-import tn.esprit.donation.entities.Employe;
-import tn.esprit.donation.entities.Entreprise;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import tn.esprit.donation.entities.Employe;
 
+import java.util.Date;
 import java.util.List;
 
-@Repository
-public interface EmployeRepository extends JpaRepository<Employe, Long> {
-    List<Employe> getEmployeByRegionAndEntreprise(String region, String nomEntreprise);
-    Entreprise findByNomEntreprise(String nomEntreprise);
+public interface EmployeRepository extends JpaRepository<Employe,Long> {
+
+    @Query("select e from Employe e join Don d on d.employe =e join CroissantRouge  cr on d member cr.dons where cr.region = :region and e.entreprise.nomEntreprise = :nomentreprise")
+            public List<Employe> getEmployeByRegionAndEntreprise(@Param("region") String region, @Param("nomentreprise") String nomentreprise) ;
+
+
 }

@@ -16,12 +16,10 @@ public class Entreprise implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEntreprise;
-
     @NonNull
     private String nomEntreprise;
 
     private String adresse;
-
-    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "entreprise")
     private Set<Employe> employes;
 }

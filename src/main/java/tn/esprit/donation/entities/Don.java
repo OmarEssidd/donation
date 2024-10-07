@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Date;
-
 @Entity
 @Getter
 @Setter
@@ -17,22 +16,11 @@ public class Don implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDon;
-
     private double montant;
-
     @Temporal(TemporalType.DATE)
     private Date date;
-
     @Enumerated(EnumType.STRING)
     private TypeDons type;
-
     @ManyToOne
-    @JoinColumn(name = "employe_id")
-    @JsonIgnore
     private Employe employe;
-
-    @ManyToOne
-    @JoinColumn(name = "croissant_rouge_id")
-    @JsonIgnore
-    private CroissantRouge croissantRouge;
 }

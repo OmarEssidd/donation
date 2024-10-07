@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.Employe;
@@ -15,57 +13,47 @@ import tn.esprit.donation.services.IServices;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("/api") 
 public class DonationRestController {
 
-    private final IServices iServices;
+    private IServices iServices;
 
     @PostMapping("/addEntreprise")
-    public ResponseEntity<Entreprise> addEntreprise(@RequestBody Entreprise entreprise) {
-        Entreprise addedEntreprise = iServices.addEntreprise(entreprise);
-        return new ResponseEntity<>(addedEntreprise, HttpStatus.CREATED);
+    public Entreprise addEntreprise(@RequestBody Entreprise entreprise){
+        return iServices.addEntreprise(entreprise);
     }
 
     @PostMapping("/addEmployeAndAssignToEntreprise/{nomEntreprise}")
-    public ResponseEntity<Employe> addEmployeAndAssignToEntreprise(@RequestBody Employe employe, 
-                                                                    @PathVariable String nomEntreprise) {
-        Employe addedEmploye = iServices.addEmployeAndAssignToEntreprise(employe, nomEntreprise);
-        return new ResponseEntity<>(addedEmploye, HttpStatus.CREATED);
+    public Employe addEmployeAndAssignToEntreprise(@RequestBody Employe employe, @PathVariable String nomEntreprise){
+        return iServices.addEmployeAndAssignToEntreprise(employe,nomEntreprise);
     }
 
     @PostMapping("/addDon")
-    public ResponseEntity<Don> addDon(@RequestBody Don don) {
-        Don addedDon = iServices.addDon(don);
-        return new ResponseEntity<>(addedDon, HttpStatus.CREATED);
+    public Don addDon(@RequestBody Don don){
+        return iServices.addDon(don);
     }
 
     @GetMapping("/getDonByType/{type}")
-    public ResponseEntity<List<Don>> getDonByType(@PathVariable TypeDons type) {
-        List<Don> donations = iServices.getDonByType(type);
-        return new ResponseEntity<>(donations, HttpStatus.OK);
+    public Set<Don> getDonByType(@PathVariable TypeDons type){
+        return iServices.getDonByType(type);
+    }
+@GetMapping("/getEmployeByRegion/{region}/{nomentreprise}")
+public List<Employe> getEmployeByRegion(@PathVariable String region, @PathVariable String nomentreprise) {
+        return iServices.getEmployeByRegion(region,nomentreprise);
+}
+
+@GetMapping("/getTotalDonation/{date1}/{date2}")
+    public Float getTotalDonation(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date1,@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date2) {
+        return iServices.getTotalDonation(date1, date2);
+    }
+@GetMapping("getEmployeByDon")
+    public void getEmployeByDon(){
+        Employe e = new Employe();
+        log.info("Le meilleur employé du mois est : " + e.getNomEmploye());
     }
 
-    @GetMapping("/getEmployeByRegion/{region}/{nomEntreprise}")
-    public ResponseEntity<List<Employe>> getEmployeByRegion(@PathVariable String region, 
-                                                             @PathVariable String nomEntreprise) {
-        List<Employe> employes = iServices.getEmployeByRegion(region, nomEntreprise);
-        return new ResponseEntity<>(employes, HttpStatus.OK);
-    }
-
-    @GetMapping("/getTotalDonation/{date1}/{date2}")
-    public ResponseEntity<Float> getTotalDonation(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date1, 
-                                                  @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date2) {
-        Float totalDonation = iServices.getTotalDonation(date1, date2);
-        return new ResponseEntity<>(totalDonation, HttpStatus.OK);
-    }
-
-    @GetMapping("/getEmployeByDon")
-    public ResponseEntity<Void> getEmployeByDon() {
-        iServices.getEmployeByDon();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }
