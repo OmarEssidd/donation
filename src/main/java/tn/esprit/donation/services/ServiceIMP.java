@@ -17,7 +17,6 @@ import tn.esprit.donation.repositories.EntrepriseRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,14 +51,14 @@ public class ServiceIMP implements IServices {
     }
 
     @Override
-    public Set<Don> getDonByType(TypeDons type) {
-        return donRepository.findByType(type);
+    public List<Don> getDonByType(TypeDons type) { // Change Set<Don> to List<Don>
+        return donRepository.findByType(type); // Ensure the repository method returns a List<Don>
     }
 
     @Override
     @Scheduled(cron = "*/15 * * * * *")
     public void getEmployeByDon() {
-        Set<Don> currentMonthDonations = donRepository.findDonByMonth();
+        List<Don> currentMonthDonations = donRepository.findDonByMonth();
 
         Map<Employe, Long> donationCountsByEmployee = currentMonthDonations.stream()
                 .collect(Collectors.groupingBy(Don::getEmploye, Collectors.counting()));
@@ -84,10 +83,9 @@ public class ServiceIMP implements IServices {
         return donRepository.calculateTotalDonationsBetweenDates(date1, date2); // Updated method name
     }
 
-    // Ensure the method signature in IServices matches this method
+    // Change Set<Don> to List<Don> in the method signature
     @Override
-    public Set<Don> getDonationsByEmploye(Employe employe) {
-        List<Don> donationsList = donRepository.findByEmploye(employe);
-        return Set.copyOf(donationsList); // Convert List to Set if needed
+    public List<Don> getDonationsByEmploye(Employe employe) {
+        return donRepository.findByEmploye(employe); // Return the List directly
     }
 }
