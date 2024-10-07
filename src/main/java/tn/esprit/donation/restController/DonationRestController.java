@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.donation.entities.Don;
 import tn.esprit.donation.entities.Employe;
@@ -18,43 +20,53 @@ import java.util.Set;
 @RestController
 @AllArgsConstructor
 @Slf4j
+@RequestMapping("/api") // Ajout d'un préfixe pour regrouper les endpoints
 public class DonationRestController {
 
-    private IServices iServices;
+    private final IServices iServices;
 
     @PostMapping("/addEntreprise")
-    public Entreprise addEntreprise(@RequestBody Entreprise entreprise){
-        return iServices.addEntreprise(entreprise);
+    public ResponseEntity<Entreprise> addEntreprise(@RequestBody Entreprise entreprise){
+        Entreprise addedEntreprise = iServices.addEntreprise(entreprise);
+        return new ResponseEntity<>(addedEntreprise, HttpStatus.CREATED); // Retourne un code 201
     }
 
     @PostMapping("/addEmployeAndAssignToEntreprise/{nomEntreprise}")
-    public Employe addEmployeAndAssignToEntreprise(@RequestBody Employe employe, @PathVariable String nomEntreprise){
-        return iServices.addEmployeAndAssignToEntreprise(employe, nomEntreprise);
+    public ResponseEntity<Employe> addEmployeAndAssignToEntreprise(@RequestBody Employe employe, 
+                                                                    @PathVariable String nomEntreprise){
+        Employe addedEmploye = iServices.addEmployeAndAssignToEntreprise(employe, nomEntreprise);
+        return new ResponseEntity<>(addedEmploye, HttpStatus.CREATED); // Retourne un code 201
     }
 
     @PostMapping("/addDon")
-    public Don addDon(@RequestBody Don don){
-        return iServices.addDon(don);
+    public ResponseEntity<Don> addDon(@RequestBody Don don){
+        Don addedDon = iServices.addDon(don);
+        return new ResponseEntity<>(addedDon, HttpStatus.CREATED); // Retourne un code 201
     }
 
     @GetMapping("/getDonByType/{type}")
-    public Set<Don> getDonByType(@PathVariable TypeDons type){
-        return iServices.getDonByType(type);
+    public ResponseEntity<Set<Don>> getDonByType(@PathVariable TypeDons type){
+        Set<Don> donations = iServices.getDonByType(type);
+        return new ResponseEntity<>(donations, HttpStatus.OK); // Retourne un code 200
     }
 
     @GetMapping("/getEmployeByRegion/{region}/{nomentreprise}")
-    public List<Employe> getEmployeByRegion(@PathVariable String region, @PathVariable String nomentreprise) {
-        return iServices.getEmployeByRegion(region, nomentreprise);
+    public ResponseEntity<List<Employe>> getEmployeByRegion(@PathVariable String region, 
+                                                             @PathVariable String nomentreprise) {
+        List<Employe> employes = iServices.getEmployeByRegion(region, nomentreprise);
+        return new ResponseEntity<>(employes, HttpStatus.OK); // Retourne un code 200
     }
 
     @GetMapping("/getTotalDonation/{date1}/{date2}")
-    public Float getTotalDonation(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date1, 
-                                  @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date2) {
-        return iServices.getTotalDonation(date1, date2);
+    public ResponseEntity<Float> getTotalDonation(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date1, 
+                                                  @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date2) {
+        Float totalDonation = iServices.getTotalDonation(date1, date2);
+        return new ResponseEntity<>(totalDonation, HttpStatus.OK); // Retourne un code 200
     }
 
     @GetMapping("/getEmployeByDon")
-    public void getEmployeByDon() {
-        iServices.getEmployeByDon();  // Calls the method from ServiceIMP
+    public ResponseEntity<Void> getEmployeByDon() {
+        iServices.getEmployeByDon();  // Appelle la méthode depuis ServiceIMP
+        return new ResponseEntity<>(HttpStatus.OK); // Retourne un code 200
     }
 }

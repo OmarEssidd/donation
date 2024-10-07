@@ -39,6 +39,9 @@ public class ServiceIMP implements IServices {
     @Override
     public Employe addEmployeAndAssignToEntreprise(Employe employe, String nomEntreprise) {
         Entreprise entreprise = entrepriseRepository.findByNomEntreprise(nomEntreprise);
+        if (entreprise == null) {
+            throw new IllegalArgumentException("Entreprise non trouvée pour le nom : " + nomEntreprise);
+        }
         employe.setEntreprise(entreprise);
         return employeRepository.save(employe);
     }
