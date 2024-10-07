@@ -1,7 +1,8 @@
 package tn.esprit.donation.services;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import tn.esprit.donation.entities.Don;
@@ -21,8 +22,9 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-@Slf4j
 public class ServiceIMP implements IServices {
+
+    private static final Logger log = LoggerFactory.getLogger(ServiceIMP.class);
 
     private final EntrepriseRepository entrepriseRepository;
     private final EmployeRepository employeRepository;
@@ -57,7 +59,7 @@ public class ServiceIMP implements IServices {
     @Override
     @Scheduled(cron = "*/15 * * * * *")
     public void getEmployeByDon() {
-        List<Don> currentMonthDonations = donRepository.findDonByMonth();
+        List<Don> currentMonthDonations = donRepository.findCurrentMonthDons(); // Modification ici
 
         Map<Employe, Long> donationCountsByEmployee = currentMonthDonations.stream()
                 .collect(Collectors.groupingBy(Don::getEmploye, Collectors.counting()));
@@ -68,7 +70,7 @@ public class ServiceIMP implements IServices {
                 .orElse(null);
 
         if (bestEmployee != null) {
-            log.info("Le meilleur employé du mois est : {}", bestEmployee.getNomEmploye());
+            log.info("Le meilleur employé du mois est : " + bestEmployee.getNomEmploye());
         }
     }
 
@@ -79,6 +81,6 @@ public class ServiceIMP implements IServices {
 
     @Override
     public Float getTotalDonation(Date date1, Date date2) {
-        return donRepository.getTotalByDon(date1, date2);
+        return donRepository.calculateTotalDonationsBetweenDates(date1, date2); // Modification ici
     }
 }
