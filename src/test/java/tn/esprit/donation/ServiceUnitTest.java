@@ -15,7 +15,7 @@ import tn.esprit.donation.repositories.EntrepriseRepository;
 import tn.esprit.donation.repositories.DonRepository;
 import tn.esprit.donation.repositories.EmployeRepository;
 import tn.esprit.donation.services.IServices;
-import tn.esprit.donation.services.ServicesImpl;
+import tn.esprit.donation.services.ServiceImpl;
 
 import java.util.*;
 
