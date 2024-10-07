@@ -61,15 +61,15 @@ class DonRepositoryTest {
     }
 
     @Test
-    void testGetTotalByDon() {
-        // Test pour calculer le total des montants des dons entre deux dates
-        Date dateDebut = new Date(System.currentTimeMillis() - (1000L * 60 * 60 * 24 * 30)); // il y a 30 jours
-        Date dateFin = new Date();
+void testGetTotalByDon() {
+    // Test pour calculer le total des montants des dons entre deux dates
+    Date dateDebut = new Date(System.currentTimeMillis() - (1000L * 60 * 60 * 24 * 30)); // il y a 30 jours
+    Date dateFin = new Date();
 
-        Float total = donRepository.getTotalByDon(dateDebut, dateFin);
+    Float total = donRepository.calculateTotalDonationsBetweenDates(dateDebut, dateFin); // Change this line
 
-        // Vérifie le total des dons
-        assertNotNull(total);
-        assertEquals(450.0f, total);
-    }
+    // Vérifie le total des dons
+    assertNotNull(total);
+    assertEquals(450.0f, total);
+}
 }
