@@ -4,15 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tn.esprit.donation.entities.Don;
-import tn.esprit.donation.entities.TypeDons;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 public interface DonRepository extends JpaRepository<Don, Long> {
-    // Existing methods...
-
+    
     /**
      * Finds all donations made in the current month.
      * 

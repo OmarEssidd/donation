@@ -59,7 +59,7 @@ public class ServiceIMP implements IServices {
     @Override
     @Scheduled(cron = "*/15 * * * * *")
     public void getEmployeByDon() {
-        List<Don> currentMonthDonations = donRepository.findCurrentMonthDons(); // Modification ici
+        Set<Don> currentMonthDonations = donRepository.findDonByMonth(); // Mise à jour ici
 
         Map<Employe, Long> donationCountsByEmployee = currentMonthDonations.stream()
                 .collect(Collectors.groupingBy(Don::getEmploye, Collectors.counting()));
@@ -81,6 +81,6 @@ public class ServiceIMP implements IServices {
 
     @Override
     public Float getTotalDonation(Date date1, Date date2) {
-        return donRepository.calculateTotalDonationsBetweenDates(date1, date2); // Modification ici
+        return donRepository.getTotalByDon(date1, date2); // Mise à jour ici
     }
 }
