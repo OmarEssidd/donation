@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class ServiceIMP  implements IServices {
+public class ServicesImpl implements IServices { // Changed the class name to ServicesImpl
 
     private EntrepriseRepository entrepriseRepository;
     private EmployeRepository employeRepository;
@@ -43,9 +43,7 @@ public class ServiceIMP  implements IServices {
 
     @Override
     public Don addDon(Don don) {
-
         return donRepository.save(don);
-
     }
 
     @Override
@@ -54,25 +52,21 @@ public class ServiceIMP  implements IServices {
     }
 
     @Override
-  @Scheduled(cron = "*/15 * * * * *")
-  //  @Scheduled(cron = "0 0 0 1 * *")
+    @Scheduled(cron = "*/15 * * * * *")
     public void getEmployeByDon() {
-
-       List<Don> currentMonthDonations = donRepository.findDonByMonth();
-
+        List<Don> currentMonthDonations = donRepository.findDonByMonth();
 
         Map<Employe, Long> donationCountsByEmployee = currentMonthDonations.stream()
                 .collect(Collectors.groupingBy(Don::getEmploye, Collectors.counting()));
-
 
         Employe bestEmployee = donationCountsByEmployee.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .orElse(null);
 
-       if (bestEmployee != null) {
-            log.info("Le meilleur employé du mois est : " + bestEmployee.getNomEmploye() );
-       }
+        if (bestEmployee != null) {
+            log.info("Le meilleur employé du mois est : " + bestEmployee.getNomEmploye());
+        }
     }
 
     @Override
