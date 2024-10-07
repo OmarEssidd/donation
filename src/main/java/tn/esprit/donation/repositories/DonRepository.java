@@ -12,6 +12,7 @@ import java.util.Set;
 public interface DonRepository extends JpaRepository<Don, Long> {
     
     Set<Don> findByType(TypeDons type);
+    
     /**
      * Finds all donations made in the current month.
      * 
@@ -23,10 +24,10 @@ public interface DonRepository extends JpaRepository<Don, Long> {
     /**
      * Calculates the total donation amount between two dates.
      *
-     * @param date1 the start date
-     * @param date2 the end date
+     * @param dateDebut the start date
+     * @param dateFin the end date
      * @return the total donation amount as a Float
      */
-    @Query("SELECT SUM(d.montant) FROM Don d WHERE d.date BETWEEN :date1 AND :date2")
-    Float getTotalByDon(@Param("date1") Date date1, @Param("date2") Date date2);
+    @Query("SELECT SUM(d.montant) FROM Don d WHERE d.date BETWEEN :dateDebut AND :dateFin")
+    Float calculateTotalDonationsBetweenDates(@Param("dateDebut") Date dateDebut, @Param("dateFin") Date dateFin);
 }

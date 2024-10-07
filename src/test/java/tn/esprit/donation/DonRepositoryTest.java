@@ -47,7 +47,7 @@ class DonRepositoryTest {
     @Test
     void testFindByType() {
         // Test pour récupérer les dons par type
-        List<Don> dons = donRepository.findByType(TypeDons.FOOD); // Ensure this returns List<Don>
+        List<Don> dons = donRepository.findByType(TypeDons.FOOD); // Assurez-vous que cela retourne List<Don>
 
         // Vérifie que les résultats contiennent les dons de type FOOD
         assertNotNull(dons);

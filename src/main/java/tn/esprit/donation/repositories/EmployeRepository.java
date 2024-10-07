@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface EmployeRepository extends JpaRepository<Employe, Long> {
     
-    @Query("SELECT e FROM Employe e JOIN e.dons d JOIN d.croissantRouge cr WHERE cr.region = :region AND e.entreprise.nomEntreprise = :nomentreprise")
-    List<Employe> getEmployeByRegionAndEntreprise(@Param("region") String region, @Param("nomentreprise") String nomentreprise);
+    @Query("SELECT e FROM Employe e JOIN e.dons d JOIN d.croissantRouge cr WHERE cr.region = :region AND e.entreprise.nomEntreprise = :nomEntreprise")
+    List<Employe> getEmployeByRegion(@Param("region") String region, @Param("nomEntreprise") String nomEntreprise);
 }
