@@ -1,27 +1,26 @@
 package tn.esprit.donation.entities;
 
-import org.junit.jupiter.api.Test;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import java.io.Serializable;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-public class DonTest {
-
-    @Test
-    public void testSetAndGetMontant() {
-        Don don = new Don();
-        don.setMontant(100.0);
-        assertEquals(100.0, don.getMontant(), "Le montant doit être 100.0");
-    }
-
-    @Test
-    public void testSetAndGetDate() {
-        Don don = new Don();
-        Date date = new Date();
-        don.setDate(date);
-        assertNotNull(don.getDate(), "La date ne doit pas être nulle");
-        assertEquals(date, don.getDate(), "La date doit correspondre à celle définie");
-    }
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+public class Don implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idDon;
+    private double montant;
+    @Temporal(TemporalType.DATE)
+    private Date date;
+    @Enumerated(EnumType.STRING)
+    private TypeDons type;
+    @ManyToOne
+    private Employe employe;
 }
