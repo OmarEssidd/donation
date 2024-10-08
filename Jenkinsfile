@@ -109,13 +109,13 @@ pipeline {
     }
 }
 
-       stage('Start Services with Docker Compose') {
+stage('Start Services with Docker Compose') {
     steps {
         script {
-            // Arrêtez le service MySQL sans sudo
-            sh 'systemctl stop mysql'
+            // Arrêtez les services existants avec Docker Compose
+            sh 'docker-compose down'  
             // Lancez les services avec Docker Compose
-            sh 'docker-compose up -d'
+            sh 'docker-compose up -d'  
         }
     }
 }
