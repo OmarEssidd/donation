@@ -87,7 +87,6 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    sh 'sudo chmod 666 /var/run/docker.sock'
                     def dockerImage = docker.build("omaressid/donation:latest")
                 }
             }
