@@ -12,18 +12,18 @@ services:
     restart: unless-stopped
     image: omaressid/donation:latest
     depends_on:
-      - dbmysql
+      # - dbmysql  # Commenté pour ne plus dépendre de dbmysql
 
-  dbmysql:
-    image: mysql:latest
-    container_name: dbmysql
-    environment:
-      - MYSQL_ROOT_PASSWORD= # Empty password
-    ports:
-      - "3306:3306"
-    restart: unless-stopped
-    volumes:
-      - db:/var/lib/mysql
+  # dbmysql:
+  #   image: mysql:latest
+  #   container_name: dbmysql
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD= # Empty password
+  #   ports:
+  #     - "3306:3306"
+  #   restart: unless-stopped
+  #   volumes:
+  #     - db:/var/lib/mysql
 
   angular-app:
     image: omaressid/donation:latest
