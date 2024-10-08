@@ -109,11 +109,20 @@ pipeline {
     }
 }
 
+stage('Stop MySQL Service') {
+    steps {
+        script {
+            // Arrêtez le service MySQL sur l'hôte s'il est en cours d'exécution
+            sh 'sudo systemctl stop mysql || true'
+        }
+    }
+}
+
 stage('Start Services with Docker Compose') {
     steps {
         script {
             // Arrêtez les services existants avec Docker Compose
-            sh 'docker-compose down'  
+            sh 'docker-compose down || true'  
             // Lancez les services avec Docker Compose
             sh 'docker-compose up -d'  
         }
