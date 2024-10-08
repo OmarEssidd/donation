@@ -11,7 +11,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD= # Empty password
     restart: unless-stopped
     image: omaressid/donation:latest
-    depends_on:
+    #depends_on:
       # - dbmysql  # Commenté pour ne plus dépendre de dbmysql
 
   # dbmysql:
