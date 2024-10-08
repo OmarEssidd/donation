@@ -1,7 +1,7 @@
 pipeline {
     agent any
 
-     tools {
+    tools {
         maven 'M2_HOME'
     }
 
@@ -12,7 +12,7 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/OmarEssidd/donation.git'
             }
         }
-           stage('Status Mysql') {
+        stage('Status Mysql') {
             steps {
                 script {
                     sh 'sudo systemctl start mysql'
@@ -20,39 +20,39 @@ pipeline {
             }
         }
 
-         stage('Maven Clean Compile') {
+        stage('Maven Clean Compile') {
             steps {
-                  sh 'mvn clean'
+                sh 'mvn clean --settings settings.xml'
                 echo 'Running Maven Compile'
-                sh 'mvn compile'
+                sh 'mvn compile --settings settings.xml'
             }
         }
 
-         stage('Tests - JUnit/Mockito') {
+        stage('Tests - JUnit/Mockito') {
             steps {
                 echo 'Running unit tests...'
-                sh 'mvn test'
+                sh 'mvn test --settings settings.xml'
             }
         }
 
-         stage('Build package') {
+        stage('Build package') {
             steps {
                 echo 'Packaging the application...'
-                sh 'mvn package'
+                sh 'mvn package --settings settings.xml'
             }
         }
         stage('Maven Install') {
             steps {
                 echo 'Installing Maven dependencies...'
-                sh 'mvn install'
+                sh 'mvn install --settings settings.xml'
             }
         }
-        
+
         stage('JaCoCo Report') {
             steps {
                 echo 'Running JaCoCo for code coverage...'
-                sh 'mvn test'
-                sh 'mvn jacoco:report'
+                sh 'mvn test --settings settings.xml'
+                sh 'mvn jacoco:report --settings settings.xml'
             }
         }
 
@@ -67,20 +67,19 @@ pipeline {
             }
         }
 
-            
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonartokenomar') {
                     echo 'Running SonarQube analysis...'
-                    sh 'mvn sonar:sonar'
+                    sh 'mvn sonar:sonar --settings settings.xml'
                 }
             }
         }
-         
+
         stage('Deploy to Nexus') {
             steps {
                 echo 'Deploying to Nexus...'
-                sh 'mvn deploy'
+                sh 'mvn deploy --settings settings.xml'
             }
         }
 
@@ -93,8 +92,8 @@ pipeline {
                 }
             }
         }
-         
-         stage('Push Docker Image to DockerHub') {
+
+        stage('Push Docker Image to DockerHub') {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
@@ -115,8 +114,6 @@ pipeline {
                 }
             }
         }
-
-    
 
         stage('Monitoring Services G/P') {
             steps {
