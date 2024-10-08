@@ -1,31 +1,31 @@
 package tn.esprit.donation.entities;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;   
+import tn.esprit.donation.entities.TypeDons;
+
 
 public class DonTest {
 
-    private Don don;
+    @Test
+    public void testDonCreation() {
+        Don don = new Don();
 
-    @BeforeEach
-    public void setUp() {
-        don = new Don();
-        don.setMontant(100.0);
+        don.setIdDon(1L);
+        don.setMontant(100.50);
         don.setDate(new Date());
-        don.setType(TypeDons.Especes);
-    }
+        don.setType(TypeDons.FINANCIER);
+        don.setEmploye(employe); // Set the Employe if required
 
-    @Test
-    public void testMontantSetterGetter() {
-        don.setMontant(200.0);
-        assertEquals(200.0, don.getMontant());
-    }
-
-    @Test
-    public void testTypeSetterGetter() {
-        don.setType(TypeDons.Nature);
-        assertEquals(TypeDons.Nature, don.getType());
+        assertNotNull(don);
+        assertEquals(1L, don.getIdDon());
+        assertEquals(100.50, don.getMontant());
+        assertNotNull(don.getDate());
+        assertEquals(TypeDons.FINANCIER, don.getType());
+        // Assert Employe if relevant (optional)
     }
 }

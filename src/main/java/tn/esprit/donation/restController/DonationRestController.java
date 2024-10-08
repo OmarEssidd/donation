@@ -1,59 +1,39 @@
 package tn.esprit.donation.restController;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.repository.query.Param;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;  // Add this import
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.donation.entities.Don;
-import tn.esprit.donation.entities.Employe;
-import tn.esprit.donation.entities.Entreprise;
-import tn.esprit.donation.entities.TypeDons;
 import tn.esprit.donation.services.IServices;
+import tn.esprit.donation.repositories.DonRepository; // Assurez-vous que cet import est présent
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/donations")
 @AllArgsConstructor
-@Slf4j
 public class DonationRestController {
+    @Autowired
+    private DonRepository donRepository;
 
-    private IServices iServices;
+    private final IServices donationService;
 
-    @PostMapping("/addEntreprise")
-    public Entreprise addEntreprise(@RequestBody Entreprise entreprise){
-        return iServices.addEntreprise(entreprise);
+    @PostMapping
+    public ResponseEntity<Don> createDon(@RequestBody Don don) {
+        Don createdDon = donationService.createDon(don);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdDon);
     }
 
-    @PostMapping("/addEmployeAndAssignToEntreprise/{nomEntreprise}")
-    public Employe addEmployeAndAssignToEntreprise(@RequestBody Employe employe, @PathVariable String nomEntreprise){
-        return iServices.addEmployeAndAssignToEntreprise(employe,nomEntreprise);
+    @GetMapping("/{id}")
+    public ResponseEntity<Don> getDonById(@PathVariable Long id) {
+        Optional<Don> don = donRepository.findById(id);
+        if (don.isPresent()) {
+            return ResponseEntity.ok(don.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-
-    @PostMapping("/addDon")
-    public Don addDon(@RequestBody Don don){
-        return iServices.addDon(don);
-    }
-
-    @GetMapping("/getDonByType/{type}")
-    public Set<Don> getDonByType(@PathVariable TypeDons type){
-        return iServices.getDonByType(type);
-    }
-@GetMapping("/getEmployeByRegion/{region}/{nomentreprise}")
-public List<Employe> getEmployeByRegion(@PathVariable String region, @PathVariable String nomentreprise) {
-        return iServices.getEmployeByRegion(region,nomentreprise);
-}
-
-@GetMapping("/getTotalDonation/{date1}/{date2}")
-    public Float getTotalDonation(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date1,@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date2) {
-        return iServices.getTotalDonation(date1, date2);
-    }
-@GetMapping("getEmployeByDon")
-    public void getEmployeByDon(){
-        Employe e = new Employe();
-        log.info("Le meilleur employé du mois est : " + e.getNomEmploye());
-    }
-
 }

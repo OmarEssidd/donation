@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import tn.esprit.donation.entities.CroissantRouge;
 import tn.esprit.donation.entities.Employe;
+import tn.esprit.donation.entities.TypeDons;
 
 import java.util.List;
 
