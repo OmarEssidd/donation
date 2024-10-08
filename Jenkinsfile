@@ -93,18 +93,22 @@ pipeline {
         }
 
         stage('Push Docker Image to DockerHub') {
-            steps {
-                script {
-                    withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerpwd')]) {
-                        echo 'Pushing Docker image to DockerHub...'
-                        sh '''
-                        docker login -u omaressid -p "$dockerpwd"
-                        docker push omaressid/donation:latest
-                        '''
-                    }
-                }
+    steps {
+        script {
+            // Utiliser usernamePassword pour obtenir le nom d'utilisateur et le mot de passe
+            withCredentials([usernamePassword(credentialsId: 'dockerhubpwd', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                echo 'Pushing Docker image to DockerHub...'
+                
+                // Connexion à DockerHub
+                sh '''
+                echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                docker push omaressid/donation:latest
+                '''
             }
         }
+    }
+}
+
         stage('Start Services with Docker Compose') {
             steps {
                 script {
