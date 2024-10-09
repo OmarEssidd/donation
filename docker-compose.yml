@@ -8,11 +8,9 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://dbmysql:3306/donation_db?createDatabaseIfNotExist=true&useSSL=false
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD= # Empty password
+      - SPRING_DATASOURCE_PASSWORD=  # Empty password
     restart: unless-stopped
     image: omaressid/donation:latest
-    #depends_on:
-      # - dbmysql  # Commenté pour ne plus dépendre de dbmysql
 
   # dbmysql:
   #   image: mysql:latest
@@ -30,6 +28,26 @@ services:
     ports:
       - "4200:80"
     restart: always
+
+  prometheus:
+    image: prom/prometheus:latest  # Utilisez la dernière version de Prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"  # Exposez le port 9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Montez le fichier de configuration
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'  # Spécifiez le fichier de config
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest  # Utilisez la dernière version de Grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"  # Exposez le port 3000
+    depends_on:
+      - prometheus  # Assurez-vous que Prometheus démarre en premier
+    restart: unless-stopped
 
 volumes:
   db:
