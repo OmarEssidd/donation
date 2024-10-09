@@ -130,14 +130,17 @@ stage('Start Services with Docker Compose') {
 }
 
 
-        stage('Monitoring Services G/P') {
-            steps {
-                script {
-                    echo 'Starting Grafana and Prometheus services...'
-                    sh 'docker start 0be4cb49cf95'
-                }
-            }
+   stage('Monitoring Services G/P') {
+    steps {
+        script {
+            echo 'Starting Grafana and Prometheus services...'
+            // Démarre les services à l'aide de docker-compose
+            sh 'docker-compose up -d prometheus grafana'
         }
+    }
+}
+
+
 
         stage('Email Notification') {
             steps {
