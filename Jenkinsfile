@@ -96,11 +96,9 @@ pipeline {
         stage('Push Docker Image to DockerHub') {
             steps {
                 script {
-                    // Utiliser usernamePassword pour obtenir le nom d'utilisateur et le mot de passe
                     withCredentials([usernamePassword(credentialsId: 'dockerhubpwd', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         echo 'Pushing Docker image to DockerHub...'
                         
-                        // Connexion à DockerHub
                         sh '''
                         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
                         docker push omaressid/donation:latest
@@ -113,7 +111,6 @@ pipeline {
         stage('Stop MySQL Service') {
             steps {
                 script {
-                    // Arrêtez le service MySQL sur l'hôte s'il est en cours d'exécution
                     sh 'sudo systemctl stop mysql || true'
                 }
             }
@@ -122,9 +119,7 @@ pipeline {
         stage('Start Services with Docker Compose') {
             steps {
                 script {
-                    // Arrêtez les services existants avec Docker Compose
-                    sh 'docker-compose down || true'  
-                    // Lancez les services avec Docker Compose
+                    sh 'docker-compose down || true'
                     sh 'docker-compose up -d'  
                 }
             }
@@ -134,11 +129,9 @@ pipeline {
             steps {
                 script {
                     echo 'Starting Grafana and Prometheus services...'
-                    // Démarre les services à l'aide de docker-compose
                     sh 'docker-compose up -d prometheus grafana'
-                    // Vérifie si les services sont bien démarrés
-                    sleep(10) // Attendre un peu pour laisser le temps aux services de démarrer
-                    sh 'docker-compose ps' // Vérifier l'état des services
+                    sleep(10)
+                    sh 'docker-compose ps'
                 }
             }
         }
@@ -179,7 +172,7 @@ Final Report: The pipeline has completed successfully. No action required.'''
                     mail bcc: '', 
                          body: emailBody,
                          cc: '', 
-                         from: '', 
+                         from: 'jenkins',  // Remplacez par votre adresse e-mail
                          replyTo: '', 
                          subject: 'Succès de la pipeline DevOps Project donation', 
                          to: 'Omar.Essid@esprit.tn'
