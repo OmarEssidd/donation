@@ -130,22 +130,25 @@ stage('Start Services with Docker Compose') {
 }
 
 
-   stage('Monitoring Services G/P') {
-    steps {
-        script {
-            echo 'Starting Grafana and Prometheus services...'
-            // Démarre les services à l'aide de docker-compose
-            sh 'docker-compose up -d prometheus grafana'
+  stages {
+        stage('Monitoring Services G/P') {
+            steps {
+                script {
+                    echo 'Starting Grafana and Prometheus services...'
+                    // Démarre les services à l'aide de docker-compose
+                    sh 'docker-compose up -d prometheus grafana'
+                    // Vérifie si les services sont bien démarrés
+                    sleep(10) // Attendre un peu pour laisser le temps aux services de démarrer
+                    sh 'docker-compose ps' // Vérifier l'état des services
+                }
+            }
         }
-    }
-}
-
-
 
         stage('Email Notification') {
             steps {
-                mail bcc: '', 
-                     body: '''Stage: GIT Pull
+                script {
+                    def emailBody = '''\
+Stage: GIT Pull
  - Pulling from Git...
 
 Stage: Maven Clean Compile
@@ -172,13 +175,26 @@ Stage: Push Docker Image
 Stage: Monitoring Services G/P
  - Starting Prometheus and Grafana...
 
-Final Report: The pipeline has completed successfully. No action required.''',
-                     cc: '', 
-                     from: '', 
-                     replyTo: '', 
-                     subject: 'Succès de la pipeline DevOps Project donation', 
-                     to: 'OmarEssid@esprit.tn'
+Final Report: The pipeline has completed successfully. No action required.'''
+
+                    mail bcc: '', 
+                         body: emailBody,
+                         cc: '', 
+                         from: '', 
+                         replyTo: '', 
+                         subject: 'Succès de la pipeline DevOps Project donation', 
+                         to: 'Omar.Essid@esprit.tn'
+                }
             }
         }
     }
+
+    post {
+        failure {
+            mail to: 'Omar.Essid@esprit.tn',
+                 subject: "Échec de la pipeline: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "Le pipeline a échoué. Consultez le résultat ici : ${env.BUILD_URL}"
+        }
+    }
+}
 }
