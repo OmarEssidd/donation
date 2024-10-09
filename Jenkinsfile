@@ -41,6 +41,7 @@ pipeline {
                 sh 'mvn package --settings settings.xml'
             }
         }
+
         stage('Maven Install') {
             steps {
                 echo 'Installing Maven dependencies...'
@@ -93,44 +94,42 @@ pipeline {
         }
 
         stage('Push Docker Image to DockerHub') {
-    steps {
-        script {
-            // Utiliser usernamePassword pour obtenir le nom d'utilisateur et le mot de passe
-            withCredentials([usernamePassword(credentialsId: 'dockerhubpwd', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                echo 'Pushing Docker image to DockerHub...'
-                
-                // Connexion à DockerHub
-                sh '''
-                echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                docker push omaressid/donation:latest
-                '''
+            steps {
+                script {
+                    // Utiliser usernamePassword pour obtenir le nom d'utilisateur et le mot de passe
+                    withCredentials([usernamePassword(credentialsId: 'dockerhubpwd', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        echo 'Pushing Docker image to DockerHub...'
+                        
+                        // Connexion à DockerHub
+                        sh '''
+                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                        docker push omaressid/donation:latest
+                        '''
+                    }
+                }
             }
         }
-    }
-}
 
-stage('Stop MySQL Service') {
-    steps {
-        script {
-            // Arrêtez le service MySQL sur l'hôte s'il est en cours d'exécution
-            sh 'sudo systemctl stop mysql || true'
+        stage('Stop MySQL Service') {
+            steps {
+                script {
+                    // Arrêtez le service MySQL sur l'hôte s'il est en cours d'exécution
+                    sh 'sudo systemctl stop mysql || true'
+                }
+            }
         }
-    }
-}
 
-stage('Start Services with Docker Compose') {
-    steps {
-        script {
-            // Arrêtez les services existants avec Docker Compose
-            sh 'docker-compose down || true'  
-            // Lancez les services avec Docker Compose
-            sh 'docker-compose up -d'  
+        stage('Start Services with Docker Compose') {
+            steps {
+                script {
+                    // Arrêtez les services existants avec Docker Compose
+                    sh 'docker-compose down || true'  
+                    // Lancez les services avec Docker Compose
+                    sh 'docker-compose up -d'  
+                }
+            }
         }
-    }
-}
 
-
-  stages {
         stage('Monitoring Services G/P') {
             steps {
                 script {
@@ -196,5 +195,4 @@ Final Report: The pipeline has completed successfully. No action required.'''
                  body: "Le pipeline a échoué. Consultez le résultat ici : ${env.BUILD_URL}"
         }
     }
-}
 }
