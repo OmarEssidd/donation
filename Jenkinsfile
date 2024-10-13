@@ -172,7 +172,7 @@ Final Report: The pipeline has completed successfully. No action required.'''
                     mail bcc: '', 
                          body: emailBody,
                          cc: '', 
-                         from: 'jenkins',  // Remplacez par votre adresse e-mail
+                         from: 'Omar.Essid@esprit.tn',  // Remplacez par votre adresse e-mail
                          replyTo: '', 
                          subject: 'Succès de la pipeline DevOps Project donation', 
                          to: 'Omar.Essid@esprit.tn'
