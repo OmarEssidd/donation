@@ -169,7 +169,8 @@ Stage: Monitoring Services G/P
 
 Final Report: The pipeline has completed successfully. No action required.'''
 
-                    mail bcc: '', 
+                    mail bcc: null,
+ 
                          body: emailBody,
                          cc: '', 
                          from: 'Omar.Essid@esprit.tn',  // Remplacez par votre adresse e-mail
