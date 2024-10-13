@@ -169,14 +169,14 @@ Stage: Monitoring Services G/P
 
 Final Report: The pipeline has completed successfully. No action required.'''
 
-                    mail bcc: null,
+                    mail bcc: '',
  
                          body: emailBody,
                          cc: '', 
-                         from: 'Omar.Essid@esprit.tn',  // Remplacez par votre adresse e-mail
+                         from: 'contact.omar.essid@gmail.com',  // Remplacez par votre adresse e-mail
                          replyTo: '', 
                          subject: 'Succès de la pipeline DevOps Project donation', 
-                         to: 'Omar.Essid@esprit.tn'
+                         to: 'contact.omar.essid@gmail.com'
                 }
             }
         }
@@ -184,7 +184,7 @@ Final Report: The pipeline has completed successfully. No action required.'''
 
     post {
         failure {
-            mail to: 'Omar.Essid@esprit.tn',
+            mail to: 'contact.omar.essid@gmail.com',
                  subject: "Échec de la pipeline: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "Le pipeline a échoué. Consultez le résultat ici : ${env.BUILD_URL}"
         }
