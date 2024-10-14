@@ -136,8 +136,6 @@ pipeline {
             }
         }
 
-        // Section de notification par email commentée
-        /*
         stage('Email Notification') {
             steps {
                 script {
@@ -172,24 +170,23 @@ Stage: Monitoring Services G/P
 Final Report: The pipeline has completed successfully. No action required.'''
 
                     mail bcc: '',
+ 
                          body: emailBody,
                          cc: '', 
                          from: 'contact.omar.essid@gmail.com',  // Remplacez par votre adresse e-mail
                          replyTo: '', 
                          subject: 'Succès de la pipeline DevOps Project donation', 
-                         to: 'contact.omar.essid@gmail.com'
+                         to: 'Omar.Essid@esprit.tn'
                 }
             }
         }
-        */
-
     }
 
     post {
         failure {
-            // Étape vide pour éviter l'erreur
-            echo 'Pipeline failed, no email notification sent.'
-            // Vous pouvez éventuellement ajouter un commentaire ici si vous le souhaitez.
+            mail to: 'contact.omar.essid@gmail.com',
+                 subject: "Échec de la pipeline: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "Le pipeline a échoué. Consultez le résultat ici : ${env.BUILD_URL}"
         }
     }
 }
