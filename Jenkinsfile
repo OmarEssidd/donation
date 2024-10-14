@@ -136,6 +136,8 @@ pipeline {
             }
         }
 
+        // Section de notification par email commentée
+        /*
         stage('Email Notification') {
             steps {
                 script {
@@ -170,7 +172,6 @@ Stage: Monitoring Services G/P
 Final Report: The pipeline has completed successfully. No action required.'''
 
                     mail bcc: '',
- 
                          body: emailBody,
                          cc: '', 
                          from: 'contact.omar.essid@gmail.com',  // Remplacez par votre adresse e-mail
@@ -180,13 +181,18 @@ Final Report: The pipeline has completed successfully. No action required.'''
                 }
             }
         }
+        */
+
     }
 
     post {
         failure {
+            // Section de notification par email en cas d'échec commentée
+            /*
             mail to: 'contact.omar.essid@gmail.com',
                  subject: "Échec de la pipeline: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                  body: "Le pipeline a échoué. Consultez le résultat ici : ${env.BUILD_URL}"
+            */
         }
     }
 }
