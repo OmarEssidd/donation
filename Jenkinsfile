@@ -187,12 +187,9 @@ Final Report: The pipeline has completed successfully. No action required.'''
 
     post {
         failure {
-            // Section de notification par email en cas d'échec commentée
-            /*
-            mail to: 'contact.omar.essid@gmail.com',
-                 subject: "Échec de la pipeline: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: "Le pipeline a échoué. Consultez le résultat ici : ${env.BUILD_URL}"
-            */
+            // Étape vide pour éviter l'erreur
+            echo 'Pipeline failed, no email notification sent.'
+            // Vous pouvez éventuellement ajouter un commentaire ici si vous le souhaitez.
         }
     }
 }
